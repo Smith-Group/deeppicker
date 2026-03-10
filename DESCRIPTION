@@ -1,0 +1,30 @@
+Package: deeppicker
+Type: Package
+Title: R Interface to DEEP Picker for One- and Two-Dimensional Peak Picking
+Version: 0.1.0
+Authors@R: c(
+    person("Colin", "Smith", email = "colin.smith@wesleyan.edu", role = c("aut", "cre"),
+      comment = c(ORCID = "0000-0002-4651-167X")),
+    person("Da-Wei", "Li", role = "aut", comment = c(ORCID = "0000-0002-3266-5272")),
+    person("Rafael", "Br\u00fcschweiler", role = "aut", comment = c(ORCID = "0000-0003-3649-4543"))
+  )
+Description: Provides an R interface to the DEEP Picker neural-network
+    peak-picking tools for one- and two-dimensional NMR spectra. The
+    package wraps the peak-picking engines, returning peak positions,
+    intensities, line-shape parameters, and confidence scores. It also
+    includes readers for supported spectrum formats,
+    including NMRPipe, Sparky, TopSpin ASCII, JSON, CSV, and ldw files,
+    so spectra can be imported and processed directly.
+License: GPL-3
+Encoding: UTF-8
+Depends: R (>= 3.6.0)
+Imports:
+    Rcpp
+LinkingTo:
+    Rcpp,
+    RcppEigen
+Suggests:
+    testthat (>= 3.0.0)
+SystemRequirements: C++17
+Config/testthat/edition: 3
+RoxygenNote: 7.3.3

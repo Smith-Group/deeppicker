@@ -1,0 +1,32 @@
+CXX_STD = CXX17
+PKG_CPPFLAGS = -I. -I./deep
+
+DEEP_CPP = \
+	deep/clique.o \
+	deep/cubic_spline.o \
+	deep/dnn_base.o \
+	deep/dnn_picker.o \
+	deep/fid_1d.o \
+	deep/fid_2d.o \
+	deep/fwhh_dnn.o \
+	deep/jsoncpp.o \
+	deep/spectrum_fwhh_1d.o \
+	deep/spectrum_fwhh.o \
+	deep/spectrum_pick_1d.o \
+	deep/spectrum_pick.o
+
+DEEP_C = \
+	deep/ann_data.o \
+	deep/erfcx.o \
+	deep/err_fcts.o \
+	deep/im_w_of_x.o \
+	deep/kiss_fft.o \
+	deep/w_of_z.o
+
+OBJECTS = $(DEEP_CPP) $(DEEP_C) deeppicker.o init.o
+
+deep/%.o: deep/%.cpp
+	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@
+
+deep/%.o: deep/%.c
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) -c $< -o $@

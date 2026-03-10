@@ -1,0 +1,6 @@
+useDynLib(deeppicker, .registration = TRUE)
+importFrom(Rcpp, evalCpp)
+export(deep_picker)
+export(deep_picker_1d)
+export(read_spectrum_1d)
+export(read_spectrum_2d)

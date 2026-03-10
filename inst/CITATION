@@ -1,0 +1,24 @@
+citHeader("To cite deeppicker, please cite the DEEP Picker publication:")
+
+bibentry(
+  bibtype = "Article",
+  title = "DEEP Picker is a Deep Neural Network for Accurate Deconvolution of Complex Two-Dimensional NMR Spectra",
+  author = c(
+    person("Da-Wei", "Li"),
+    person("Alexandar L.", "Hansen"),
+    person("Chunhua", "Yuan"),
+    person("Lei", "Bruschweiler-Li"),
+    person("Rafael", "Br\u00fcschweiler")
+  ),
+  journal = "Nature Communications",
+  year = "2021",
+  volume = "12",
+  pages = "5229",
+  doi = "10.1038/s41467-021-25496-5",
+  textVersion = paste(
+    "Li, D.-W., Hansen, A. L., Yuan, C., Bruschweiler-Li, L., and Bruschweiler, R. (2021).",
+    "DEEP Picker is a Deep Neural Network for Accurate Deconvolution of Complex Two-Dimensional NMR Spectra.",
+    "Nature Communications, 12, 5229.",
+    "doi:10.1038/s41467-021-25496-5"
+  )
+)
