@@ -6,6 +6,8 @@
 #include <map>
 #include <iostream>
 
+#include "deep_output.h"
+
 enum FID_DATA_COMPLEXITY
 {
     FID_DATA_COMPLEXITY_REAL = 0,
@@ -117,7 +119,7 @@ public:
          * (this function should be called after set_n)
         */
         if(apodization_values.size()==0){
-            std::cerr<<"Error: window function is not defined yet. Please call set_n first."<<std::endl;
+            DEEP_ERR<<"Error: window function is not defined yet. Please call set_n first."<<std::endl;
             return true;
         }
         /**
@@ -384,7 +386,7 @@ public:
     uintptr_t get_data_of_real();
     uintptr_t get_data_of_imag();
     int get_fid_data_type() const{
-        std::cout<<"udict_acqus.at('DTYPA') = "<<udict_acqus.at("DTYPA")<<std::endl;
+        DEEP_OUT<<"udict_acqus.at('DTYPA') = "<<udict_acqus.at("DTYPA")<<std::endl;
         return std::stoi(udict_acqus.at("DTYPA")); //2: double (float64) or 0: int32
     }
 #endif

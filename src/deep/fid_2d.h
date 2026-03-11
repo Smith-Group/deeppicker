@@ -7,6 +7,7 @@
 #include <string>
 #include <cstdint>
 
+#include "deep_output.h"
 #include "fid_1d.h"
 
 namespace ldw_math_spectrum_2d
@@ -351,7 +352,7 @@ public:
     {
         if(from<0 || from>=1 || to<=0 || to>1 || from>=to)
         {
-            std::cerr << "Error: from and to must be in [0,1) and from<to." << std::endl;
+            DEEP_ERR << "Error: from and to must be in [0,1) and from<to." << std::endl;
             return false;
         }
         extraction_from=from;
@@ -422,7 +423,7 @@ public:
     {
         if(aqseq_in != "321" && aqseq_in != "312")
         {
-            std::cerr << "Error: aqseq must be 321 or 312." << std::endl;
+            DEEP_ERR << "Error: aqseq must be 321 or 312." << std::endl;
             return false;
         }
         aqseq=aqseq_in;
@@ -495,7 +496,7 @@ public:
         user_scale2_negative=y;
     };
 
-    inline void set_noise_level(double t) {noise_level=t; std::cout<<"Direct set noise level to "<<t<<std::endl;}
+    inline void set_noise_level(double t) {noise_level=t; DEEP_OUT<<"Direct set noise level to "<<t<<std::endl;}
 
     bool init(std::string, int noise_flag=1);  //read spectrum and est noise
 

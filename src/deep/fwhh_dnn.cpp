@@ -1,4 +1,6 @@
 #include <cmath>
+
+#include "deep_output.h"
 #include "fwhh_dnn.h"
 
 
@@ -389,10 +391,10 @@ fwhh_estimator::fwhh_estimator() {
     n+=d3.read(fwhh_dnn_data+n);
     n+=d4.read(fwhh_dnn_data+n);
     n+=d5.read(fwhh_dnn_data+n);
-    // std::cout<<"n should be 3511 and n is "<<n<<std::endl;
+    // DEEP_OUT<<"n should be 3511 and n is "<<n<<std::endl;
     if(n!=3511)
     {
-        std::cout<<"error in fwhh_estimator::fwhh_estimator, # of total readin parameter !=3511"<<std::endl;
+        DEEP_OUT<<"error in fwhh_estimator::fwhh_estimator, # of total readin parameter !=3511"<<std::endl;
     }
 };
 
@@ -406,5 +408,4 @@ float fwhh_estimator::predict(std::vector<float> &input)
     d5.predict(1,t4,t5);
     return t5[0];
 };
-
 

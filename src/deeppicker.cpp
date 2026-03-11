@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+#include "deeppicker_output.h"
 #include "deep/spectrum_pick_1d.h"
 #include "deep/spectrum_pick.h"
 
@@ -291,6 +292,7 @@ extern "C" SEXP C_deeppicker_pick_matrix(SEXP spectrumSEXP,
     const bool negative = as<bool>(negativeSEXP);
     const int debug_flag = as<int>(debugFlagSEXP);
     const std::string out_format = as<std::string>(outFormatSEXP);
+    DeepOutputScope output_scope(true);
 
     DeepPickerAdapter picker;
     if (!picker.load_from_matrix(spectrum, ppm)) {
@@ -335,6 +337,8 @@ extern "C" SEXP C_deeppicker_pick_file(SEXP pathSEXP,
     const bool t1_noise = as<bool>(t1NoiseSEXP);
     const bool negative = as<bool>(negativeSEXP);
 
+    DeepOutputScope output_scope(true);
+
     spectrum_pick picker;
 
     if (!picker.init(path)) {
@@ -375,6 +379,8 @@ extern "C" SEXP C_deeppicker_pick_1d(SEXP spectrumSEXP,
     const bool auto_ppp = as<bool>(autoPppSEXP);
     const double interp_step = as<double>(interpStepSEXP);
     const bool negative = as<bool>(negativeSEXP);
+
+    DeepOutputScope output_scope(true);
 
     DeepPicker1dAdapter picker;
     picker.init(scale, scale2, noise);
@@ -421,6 +427,8 @@ extern "C" SEXP C_deeppicker_pick_1d_file(SEXP pathSEXP,
     const double interp_step = as<double>(interpStepSEXP);
     const bool negative = as<bool>(negativeSEXP);
 
+    DeepOutputScope output_scope(true);
+
     spectrum_pick_1d picker;
     picker.init(scale, scale2, noise);
     picker.init_mod(model);
@@ -445,6 +453,7 @@ extern "C" SEXP C_deeppicker_pick_1d_file(SEXP pathSEXP,
 extern "C" SEXP C_deeppicker_read_1d(SEXP pathSEXP)
 {
     const std::string path = as<std::string>(pathSEXP);
+    DeepOutputScope output_scope(true);
     DeepReader1dAdapter reader;
 
     if (!reader.load_file(path)) {
@@ -457,6 +466,7 @@ extern "C" SEXP C_deeppicker_read_1d(SEXP pathSEXP)
 extern "C" SEXP C_deeppicker_read_2d(SEXP pathSEXP)
 {
     const std::string path = as<std::string>(pathSEXP);
+    DeepOutputScope output_scope(true);
     DeepReader2dAdapter reader;
 
     if (!reader.load_file(path)) {

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "deep_output.h"
 #include "json/json.h"
 #include "spectrum_fwhh.h"
 
@@ -59,7 +60,7 @@ bool spectrum_fwhh::get_median_peak_width(float &median_width_direct, float &med
 
     double min_intensity = std::max(5.0 * noise_level, 0.01 * max_intensity);
 
-    std::cout << "Minimal peak intensity is set to " << min_intensity << std::endl;
+    DEEP_OUT << "Minimal peak intensity is set to " << min_intensity << std::endl;
 
     std::vector<int> fwhh_p1, fwhh_p2;
     std::vector<float> fwhh_p_intensity;
@@ -99,7 +100,7 @@ bool spectrum_fwhh::get_median_peak_width(float &median_width_direct, float &med
         }
     }
 
-    std::cout << "Picked " << fwhh_p1.size() << " peaks for peak width estimation." << std::endl;
+    DEEP_OUT << "Picked " << fwhh_p1.size() << " peaks for peak width estimation." << std::endl;
 
 
     /**

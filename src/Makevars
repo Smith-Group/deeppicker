@@ -4,6 +4,7 @@ PKG_CPPFLAGS = -I. -I./deep
 DEEP_CPP = \
 	deep/clique.o \
 	deep/cubic_spline.o \
+	deep/deep_output.o \
 	deep/dnn_base.o \
 	deep/dnn_picker.o \
 	deep/fid_1d.o \
@@ -23,7 +24,7 @@ DEEP_C = \
 	deep/kiss_fft.o \
 	deep/w_of_z.o
 
-OBJECTS = $(DEEP_CPP) $(DEEP_C) deeppicker.o init.o
+OBJECTS = $(DEEP_CPP) $(DEEP_C) deeppicker.o deeppicker_output.o init.o
 
 deep/%.o: deep/%.cpp
 	$(CXX) $(ALL_CPPFLAGS) $(ALL_CXXFLAGS) -c $< -o $@

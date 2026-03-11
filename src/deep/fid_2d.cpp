@@ -20,6 +20,7 @@
  */
 #include "kiss_fft.h"
 
+#include "deep_output.h"
 #include "json/json.h"
 
 #include "lmminimizer.h"
@@ -168,7 +169,7 @@ namespace ldw_math_spectrum_2d
             file_name_full = str;
         }
 
-        // std::cout<<"file_name_full is "<<file_name_full<<std::endl;
+        // DEEP_OUT<<"file_name_full is "<<file_name_full<<std::endl;
 
         found = file_name_full.find_last_of(".");
         if (found != std::string::npos)
@@ -183,9 +184,9 @@ namespace ldw_math_spectrum_2d
             file_name = file_name_full;
         }
 
-        // std::cout<<"path is "<<path_name<<std::endl;
-        // std::cout<<"file_name is "<<file_name<<std::endl;
-        // std::cout<<"file_name_ext is "<<file_name_ext<<std::endl;
+        // DEEP_OUT<<"path is "<<path_name<<std::endl;
+        // DEEP_OUT<<"file_name is "<<file_name<<std::endl;
+        // DEEP_OUT<<"file_name_ext is "<<file_name_ext<<std::endl;
 
         return b;
     }
@@ -337,7 +338,7 @@ bool fid_2d::read_nus_list(std::string fname)
     
     if (contents.empty())
     {
-        std::cerr << "Error: nus list file is empty or does not exist." << std::endl;
+        DEEP_ERR << "Error: nus list file is empty or does not exist." << std::endl;
         return false;
     }
     return read_nus_list_from_string(contents);
@@ -362,12 +363,12 @@ bool fid_2d::read_nus_list_from_string(const std::string &nus_string)
         }
     }
 
-    std::cout<<"Read "<<nuslists.size()<<" nus points from string"<<std::endl;
+    DEEP_OUT<<"Read "<<nuslists.size()<<" nus points from string"<<std::endl;
     for(int i=0;i<nuslists.size();i++)
     {
-        std::cout<<nuslists[i]<<" ";
+        DEEP_OUT<<nuslists[i]<<" ";
     }
-    std::cout<<std::endl;
+    DEEP_OUT<<std::endl;
 
     return true;
 }
@@ -382,7 +383,7 @@ bool fid_2d::read_phase_correction(std::string fname)
 {
     std::ifstream infile(fname);
     infile >> user_p0_direct >> user_p1_direct >> user_p0_indirect >> user_p1_indirect;
-    std::cout<<"User provided phase correction values: "<<user_p0_direct<<" "<<user_p1_direct<<" "<<user_p0_indirect<<" "<<user_p1_indirect<<std::endl;
+    DEEP_OUT<<"User provided phase correction values: "<<user_p0_direct<<" "<<user_p1_direct<<" "<<user_p0_indirect<<" "<<user_p1_indirect<<std::endl;
     return true;
 }
 
@@ -412,13 +413,13 @@ bool fid_2d::read_bruker_folder(std::string folder_name)
 
     if (status != 0)
     {
-        std::cerr << "Error: folder " << folder_name << " does not exist!" << std::endl;
+        DEEP_ERR << "Error: folder " << folder_name << " does not exist!" << std::endl;
         return false;
     }
     else if (!(sb.st_mode & S_IFDIR))
     {
         // exist but is not a directory
-        std::cerr << "Error: folder " << folder_name << " does not exist!" << std::endl;
+        DEEP_ERR << "Error: folder " << folder_name << " does not exist!" << std::endl;
         return false;
     }
 
@@ -442,7 +443,7 @@ bool fid_2d::read_bruker_folder(std::string folder_name)
         else
         {
             fid_data_file_name = ""; // label it as empty
-            std::cerr<< "Error: cannot find fid or ser file in folder " << folder_name << std::endl;
+            DEEP_ERR<< "Error: cannot find fid or ser file in folder " << folder_name << std::endl;
             return false;
         }
     }
@@ -454,7 +455,7 @@ bool fid_2d::read_bruker_folder(std::string folder_name)
     status = stat(acqus_file_name.c_str(), &sb);
     if (status != 0)
     {
-        std::cerr << "Error: cannot find acqus file in folder " << folder_name << std::endl;
+        DEEP_ERR << "Error: cannot find acqus file in folder " << folder_name << std::endl;
         return false;
     }
 
@@ -465,7 +466,7 @@ bool fid_2d::read_bruker_folder(std::string folder_name)
     status = stat(acqus_file_name.c_str(), &sb);
     if (status != 0)
     {
-        std::cerr << "Error: cannot find acqu2s file in folder " << folder_name << std::endl;
+        DEEP_ERR << "Error: cannot find acqu2s file in folder " << folder_name << std::endl;
         return false;
     }
 
@@ -477,7 +478,7 @@ bool fid_2d::read_bruker_folder(std::string folder_name)
     status = stat(pulse_program_file_name.c_str(), &sb);
     if (status != 0)
     {
-        std::cout << "Warning: cannot find pulseprogram file in folder " << folder_name << std::endl;
+        DEEP_OUT << "Warning: cannot find pulseprogram file in folder " << folder_name << std::endl;
         pulse_program_file_name = "";
     }
 
@@ -611,7 +612,7 @@ bool fid_2d::read_bruker_files(const std::string &pulse_program_name,const std::
             fid_data_int.resize(ndata_bruker * ndata_bruker_indirect * nspectra);
             if(nspectra==0)
             {
-                std::cout << "Error: cannot read int32 from file " << fid_data_file_names[i] << std::endl;
+                DEEP_OUT << "Error: cannot read int32 from file " << fid_data_file_names[i] << std::endl;
                 return false;
             }
         }
@@ -635,7 +636,7 @@ bool fid_2d::read_bruker_files(const std::string &pulse_program_name,const std::
             temp_fid_data_float.resize(ndata_bruker * ndata_bruker_indirect * nspectra);
             if(nspectra==0)
             {
-                std::cout << "Error: cannot read float64 from file " << fid_data_file_names[i] << std::endl;
+                DEEP_OUT << "Error: cannot read float64 from file " << fid_data_file_names[i] << std::endl;
                 return false;
             }
         }
@@ -661,8 +662,8 @@ bool fid_2d::read_bruker_files(const std::string &pulse_program_name,const std::
         fclose(fp_fid_data);
     }
 
-    std::cout << "Read " << nspectra << " spectra from " << fid_data_file_names.size() << " files" << std::endl;
-    std::cout <<" ndata_bruker = "<<ndata_bruker<<" ndata_bruker_indirect = "<<ndata_bruker_indirect<<std::endl;
+    DEEP_OUT << "Read " << nspectra << " spectra from " << fid_data_file_names.size() << " files" << std::endl;
+    DEEP_OUT <<" ndata_bruker = "<<ndata_bruker<<" ndata_bruker_indirect = "<<ndata_bruker_indirect<<std::endl;
 
     return process_fid_data();
 }
@@ -923,7 +924,7 @@ bool fid_2d::process_dictionary()
     else // 0 or 2
     {
         data_complexity = FID_DATA_COMPLEXITY_REAL;
-        std::cerr << "Error: FID data is real, not complex" << std::endl;
+        DEEP_ERR << "Error: FID data is real, not complex" << std::endl;
         return false;
     }
 
@@ -944,7 +945,7 @@ bool fid_2d::process_dictionary()
      */
     if (udict_acqus_direct.find("TD") == udict_acqus_direct.end())
     {
-        std::cout << "Error: cannot find TD in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find TD in acqus file" << std::endl;
         return false;
     }
 
@@ -956,7 +957,7 @@ bool fid_2d::process_dictionary()
      */
     if (udict_acqus_indirect.find("TD") == udict_acqus_indirect.end())
     {
-        std::cout << "Error: cannot find TD in acqu2s file" << std::endl;
+        DEEP_OUT << "Error: cannot find TD in acqu2s file" << std::endl;
         return false;
     }
     int td2 = std::stoi(udict_acqus_indirect["TD"]);
@@ -967,7 +968,7 @@ bool fid_2d::process_dictionary()
      */
     if (udict_acqus_indirect.find("FnMODE") == udict_acqus_indirect.end())
     {
-        std::cout << "Error: cannot find FnMODE in acqu2s file" << std::endl;
+        DEEP_OUT << "Error: cannot find FnMODE in acqu2s file" << std::endl;
         return false;
     }
     fnmode = std::stoi(udict_acqus_indirect["FnMODE"]);
@@ -1025,12 +1026,12 @@ bool fid_2d::process_dictionary()
          */
         if (grpdly <= 0.0)
         {
-            std::cout << "Error: GRPDLY = " << grpdly << " is not supported" << std::endl;
+            DEEP_OUT << "Error: GRPDLY = " << grpdly << " is not supported" << std::endl;
         }
     }
     else
     {
-        std::cout << "Error: cannot find GRPDLY in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find GRPDLY in acqus file" << std::endl;
     }
 
     /**
@@ -1053,7 +1054,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Warning: cannot find RG in acqus file" << std::endl;
+        DEEP_OUT << "Warning: cannot find RG in acqus file" << std::endl;
         receiver_gain = 1.0; // default
     }
 
@@ -1067,7 +1068,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find SW_h in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find SW_h in acqus file" << std::endl;
         return false;
     }
 
@@ -1077,7 +1078,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find SFO1 in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find SFO1 in acqus file" << std::endl;
         return false;
     }
 
@@ -1087,7 +1088,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find O1 in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find O1 in acqus file" << std::endl;
         return false;
     }
 
@@ -1100,7 +1101,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find SW_h in acqu2s file" << std::endl;
+        DEEP_OUT << "Error: cannot find SW_h in acqu2s file" << std::endl;
         return false;
     }
 
@@ -1110,7 +1111,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find SFO1 in acqu2s file" << std::endl;
+        DEEP_OUT << "Error: cannot find SFO1 in acqu2s file" << std::endl;
         return false;
     }
 
@@ -1120,7 +1121,7 @@ bool fid_2d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find O1 in acqu2s file" << std::endl;
+        DEEP_OUT << "Error: cannot find O1 in acqu2s file" << std::endl;
         return false;
     }
 
@@ -1170,13 +1171,13 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
     FILE *fp = fopen(fname.c_str(), "rb");
     if (fp == NULL)
     {
-        std::cout << "Error: cannot open file " << fname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << fname << std::endl;
         return false;
     }
     int n_read = fread(nmrpipe_header_data.data(), sizeof(float), 512, fp);
     if (n_read != 512)
     {
-        std::cout << "Error: cannot read 512 float from file " << fname << std::endl;
+        DEEP_OUT << "Error: cannot read 512 float from file " << fname << std::endl;
         return false;
     }
 
@@ -1184,7 +1185,7 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
 
     if (nmrpipe_dict_float["FDDIMCOUNT"] != 2.0)
     {
-        std::cout << "FDDIMCOUNT = " << nmrpipe_dict_float["FDDIMCOUNT"] << ", this is not true 2D data" << std::endl;
+        DEEP_OUT << "FDDIMCOUNT = " << nmrpipe_dict_float["FDDIMCOUNT"] << ", this is not true 2D data" << std::endl;
     }
 
     set_varibles_from_nmrpipe_dictionary();
@@ -1256,7 +1257,7 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
         intermediate_data_imag_real.resize(ndata_frq * ndata_indirect, 0.0f);
         intermediate_data_imag_imag.resize(ndata_frq * ndata_indirect, 0.0f);
 
-        std::cout<<"n_out_dim = "<<n_outer_dim<<" n_in_dim = "<<n_inner_dim<<std::endl;
+        DEEP_OUT<<"n_out_dim = "<<n_outer_dim<<" n_in_dim = "<<n_inner_dim<<std::endl;
 
         for (int i = 0; i < n_outer_dim; i++)
         {
@@ -1275,7 +1276,7 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
     }
     else
     {
-        std::cout << "Error: FDF2FTFLAG = " << nmrpipe_dict_float["FDF2FTFLAG"] << ", FDF1FTFLAG = " << nmrpipe_dict_float["FDF1FTFLAG"] << " is not supported" << std::endl;
+        DEEP_OUT << "Error: FDF2FTFLAG = " << nmrpipe_dict_float["FDF2FTFLAG"] << ", FDF1FTFLAG = " << nmrpipe_dict_float["FDF1FTFLAG"] << " is not supported" << std::endl;
         return false;
     }
 
@@ -1523,7 +1524,7 @@ bool fid_2d::fft_worker(int n_dim1, std::vector<int> dim1_flag, int n_dim2, int 
         }
         else
         {
-            std::cout << "Error: cannot allocate memory for kiss_fft_cfg" << std::endl;
+            DEEP_OUT << "Error: cannot allocate memory for kiss_fft_cfg" << std::endl;
             return false;
         }
 
@@ -1629,7 +1630,7 @@ bool fid_2d::write_json(std::string fname)
     std::ofstream outfile(fname.c_str());
     if (!outfile.is_open())
     {
-        std::cout << "Error: cannot open file " << fname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << fname << std::endl;
         return false;
     }
 
@@ -1696,7 +1697,7 @@ bool fid_2d::write_pseudo3d_json(std::string fname)
     std::ofstream outfile(fname.c_str());
     if (!outfile.is_open())
     {
-        std::cout << "Error: cannot open file " << fname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << fname << std::endl;
         return false;
     }
 
@@ -1742,8 +1743,8 @@ bool fid_2d::indirect_only_process(bool b_indirect_direct)
     */
     if(b_frq == false || b_nmrPipe_transposed == false)
     {
-        std::cout<<" Require b_frq = true and b_nmrPipe_transposed = true"<<std::endl;
-        std::cout << "Error: b_frq = " << b_frq << " and/or b_nmrPipe_transposed = " << b_nmrPipe_transposed << std::endl;
+        DEEP_OUT<<" Require b_frq = true and b_nmrPipe_transposed = true"<<std::endl;
+        DEEP_OUT << "Error: b_frq = " << b_frq << " and/or b_nmrPipe_transposed = " << b_nmrPipe_transposed << std::endl;
         return false;
     }
     run_indirect_dimension(b_indirect_direct);
@@ -1832,7 +1833,7 @@ bool fid_2d::water_suppression()
 
     if(fid_data_real_real.size()==0 || fid_data_real_imag.size()==0 || fid_data_imag_real.size()==0 || fid_data_imag_imag.size()==0)
     {
-        std::cout<<"Error: fid_data is empty"<<std::endl;
+        DEEP_OUT<<"Error: fid_data is empty"<<std::endl;
         return false;
     }
 
@@ -1866,7 +1867,7 @@ bool fid_2d::polynorminal_baseline(int order)
 {
     if(spectrum_real_real.size()==0)
     {
-        std::cout<<"Error: spectrum_real_real is empty"<<std::endl;
+        DEEP_OUT<<"Error: spectrum_real_real is empty"<<std::endl;
         return false;
     }
 
@@ -1935,7 +1936,7 @@ bool fid_2d::polynorminal_baseline(int order)
             spectrum_real_real[i*ndata_frq+j] -= baseline;
         }
     }
-    std::cout<<"Baseline correction done using polynorminal at order "<<order<<std::endl;
+    DEEP_OUT<<"Baseline correction done using polynorminal at order "<<order<<std::endl;
 
     return true;
 }
@@ -2051,11 +2052,11 @@ bool fid_2d::run_direct_dimension(bool b_di_direct)
 
     if(extraction_from_pos>=extraction_to_pos)
     {
-        std::cout<<"Error: extraction_from_pos >= extraction_to_pos. SKIP"<<std::endl;
+        DEEP_OUT<<"Error: extraction_from_pos >= extraction_to_pos. SKIP"<<std::endl;
     }
     else
     {
-        std::cout<<"Extraction from "<<extraction_from_pos<<" to "<<extraction_to_pos<<std::endl;
+        DEEP_OUT<<"Extraction from "<<extraction_from_pos<<" to "<<extraction_to_pos<<std::endl;
         int n_inner_dim_new = extraction_to_pos - extraction_from_pos;
         
         /**
@@ -2601,7 +2602,7 @@ bool fid_2d::write_nmrpipe_intermediate(std::string outfname)
     FILE *fp = fopen(outfname.c_str(), "wb");
     if (fp == NULL)
     {
-        std::cerr << "Error: cannot open file " << outfname << " for writing" << std::endl;
+        DEEP_ERR << "Error: cannot open file " << outfname << " for writing" << std::endl;
         return false;
     }
     /**
@@ -2687,7 +2688,7 @@ bool fid_2d::write_nmrpipe_ft2(std::string outfname)
     FILE *fp = fopen(outfname.c_str(), "wb");
     if (fp == NULL)
     {
-        std::cerr << "Error: cannot open file " << outfname << " for writing" << std::endl;
+        DEEP_ERR << "Error: cannot open file " << outfname << " for writing" << std::endl;
         return false;
     }
     /**
@@ -2739,7 +2740,7 @@ bool fid_2d::write_nmrpipe_ft2(std::string outfname)
             FILE *fp2 = fopen(outfname2.c_str(), "wb");
             if (fp2 == NULL)
             {
-                std::cerr << "Error: cannot open file " << outfname2 << " for writing" << std::endl;
+                DEEP_ERR << "Error: cannot open file " << outfname2 << " for writing" << std::endl;
                 return false;
             }
             /**
@@ -2788,7 +2789,7 @@ bool fid_2d::write_nmrpipe_fid(std::string outfname)
     FILE *fp = fopen(outfname.c_str(), "wb");
     if (fp == NULL)
     {
-        std::cerr << "Error: cannot open file " << outfname << " for writing" << std::endl;
+        DEEP_ERR << "Error: cannot open file " << outfname << " for writing" << std::endl;
         return false;
     }
     /**
@@ -2898,15 +2899,15 @@ bool fid_2d::read_spectrum(std::string infname)
 bool fid_2d::init(std::string infname, int noise_flag)
 {
 
-    // std::cout<<"peak_diag is "<<peak_diag<<std::endl;
-    // std::cout<<"flag_shoulder is "<<flag_shoulder<<std::endl;
+    // DEEP_OUT<<"peak_diag is "<<peak_diag<<std::endl;
+    // DEEP_OUT<<"flag_shoulder is "<<flag_shoulder<<std::endl;
     bool b_read;
 
     b_read = read_spectrum(infname);
 
     if (b_read)
     {
-        std::cout << "Done reading" << std::endl;
+        DEEP_OUT << "Done reading" << std::endl;
 
         if (noise_flag == 1)
         {
@@ -3016,9 +3017,9 @@ bool fid_2d::read_mnova(std::string infname)
         stop2 = *yy.begin();
         step2 = -(begin2 - stop2) / (ndata_frq_indirect - 1);
 
-        std::cout << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
-        std::cout << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm, stop at " << stop1 << std::endl;
-        std::cout << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm, stop at " << stop2 << std::endl;
+        DEEP_OUT << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
+        DEEP_OUT << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm, stop at " << stop1 << std::endl;
+        DEEP_OUT << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm, stop at " << stop2 << std::endl;
 
         spectrum_real_real.clear();
         spectrum_real_real.resize(ndata_frq * ndata_frq_indirect, 0.0f);
@@ -3030,10 +3031,10 @@ bool fid_2d::read_mnova(std::string infname)
             int k2 = round(-(begin2 - y[i]) / step2);
             if (k1 < 0 || k1 >= ndata_frq || k2 < 0 || k2 >= ndata_frq_indirect)
             {
-                std::cout << "ERROR in read mnova format, k1=" << k1 << " k2=" << k2 << std::endl;
+                DEEP_OUT << "ERROR in read mnova format, k1=" << k1 << " k2=" << k2 << std::endl;
             }
             spect[k2 * ndata_frq + k1] = float(z[i]);
-            // std::cout<<x[i]<<" "<<k1<<" "<<y[i]<<" "<<k2<<" "<<z[i]<<std::endl;
+            // DEEP_OUT<<x[i]<<" "<<k1<<" "<<y[i]<<" "<<k2<<" "<<z[i]<<std::endl;
         }
     }
 
@@ -3142,9 +3143,9 @@ bool fid_2d::read_mnova(std::string infname)
     origin_frequency = stop1 * observed_frequency;
     origin_frequency_indirect = stop2 * observed_frequency_indirect;
 
-    std::cout << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
-    std::cout << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
-    std::cout << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm" << std::endl;
+    DEEP_OUT << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
+    DEEP_OUT << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
+    DEEP_OUT << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm" << std::endl;
 
     return true;
 }
@@ -3178,7 +3179,7 @@ bool fid_2d::read_topspin_txt(std::string infname)
 
     if (!fin)
     {
-        std::cout << "Can't open " << infname << " to read." << std::endl;
+        DEEP_OUT << "Can't open " << infname << " to read." << std::endl;
         return false;
     }
 
@@ -3300,9 +3301,9 @@ bool fid_2d::read_topspin_txt(std::string infname)
     origin_frequency = stop1 * observed_frequency;
     origin_frequency_indirect = stop2 * observed_frequency_indirect;
 
-    std::cout << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
-    std::cout << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
-    std::cout << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm" << std::endl;
+    DEEP_OUT << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
+    DEEP_OUT << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
+    DEEP_OUT << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm" << std::endl;
 
     return true;
 }
@@ -3318,7 +3319,7 @@ bool fid_2d::read_txt(std::string infname)
 
     if (!fin)
     {
-        std::cout << "Can't open " << infname << " to read." << std::endl;
+        DEEP_OUT << "Can't open " << infname << " to read." << std::endl;
         return false;
     }
 
@@ -3413,8 +3414,8 @@ bool fid_2d::read_nmr_ft2_virtual(std::vector<float> header_, const std::vector<
     }
     else
     {
-        std::cout << "ERROR: complex/real and transpose combination is not supported." << std::endl;
-        std::cout << "b_imaginary=" << b_imaginary << " b_imaginary_indirect=" << b_imaginary_indirect << std::endl;
+        DEEP_OUT << "ERROR: complex/real and transpose combination is not supported." << std::endl;
+        DEEP_OUT << "b_imaginary=" << b_imaginary << " b_imaginary_indirect=" << b_imaginary_indirect << std::endl;
         return false;
     }
 }
@@ -3426,13 +3427,13 @@ bool fid_2d::process_pipe_header(std::vector<float> &header)
 
     if (b_nmrPipe_transposed == 0 && int(header[24]) != 2)
     {
-        std::cout << " First dimension should always be dimension 2 in non-transposed spectrum, it is " << int(header[24]) << std::endl;
+        DEEP_OUT << " First dimension should always be dimension 2 in non-transposed spectrum, it is " << int(header[24]) << std::endl;
         return false;
     }
 
     if (b_nmrPipe_transposed == 1 && int(header[24]) != 1)
     {
-        std::cout << " First dimension should always be dimension 1 in transposed spectrum, it is " << int(header[24]) << std::endl;
+        DEEP_OUT << " First dimension should always be dimension 1 in transposed spectrum, it is " << int(header[24]) << std::endl;
         return false;
     }
 
@@ -3586,19 +3587,19 @@ bool fid_2d::process_pipe_header(std::vector<float> &header)
     observed_frequency_indirect = frqs_indirect; // copy to member variables
 
     
-    std::cout << "Spectrum width are " << spectral_width << " Hz and " << spectral_width_indirect << " Hz" << std::endl;
-    std::cout << "Fields are " << observed_frequency << " mHz and " << observed_frequency_indirect << " mHz" << std::endl;
-    std::cout << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
-    std::cout << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " and last is " << stop1 << std::endl;
-    std::cout << "Indirect dimension offset is " << begin2 << ", ppm per step is " << step2 << " and last is " << stop2 << std::endl;
+    DEEP_OUT << "Spectrum width are " << spectral_width << " Hz and " << spectral_width_indirect << " Hz" << std::endl;
+    DEEP_OUT << "Fields are " << observed_frequency << " mHz and " << observed_frequency_indirect << " mHz" << std::endl;
+    DEEP_OUT << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
+    DEEP_OUT << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " and last is " << stop1 << std::endl;
+    DEEP_OUT << "Indirect dimension offset is " << begin2 << ", ppm per step is " << step2 << " and last is " << stop2 << std::endl;
 
     if (b_imaginary == true && b_imaginary_indirect == true)
     {
-        std::cout << "Data type is complex" << std::endl;
+        DEEP_OUT << "Data type is complex" << std::endl;
     }
     else
     {
-        std::cout << "Data type is real" << std::endl;
+        DEEP_OUT << "Data type is real" << std::endl;
     }
 
     return true;
@@ -3653,7 +3654,7 @@ bool fid_2d::write_pipe_from_spect(std::vector<std::vector<float>> spect, std::s
     FILE *fp = fopen(fname.c_str(), "w");
     if (fp == NULL)
     {
-        std::cout << "cannot open file " << fname.c_str() << "to write" << std::endl;
+        DEEP_OUT << "cannot open file " << fname.c_str() << "to write" << std::endl;
     }
     else
     {
@@ -3676,7 +3677,7 @@ bool fid_2d::write_pipe(std::string fname,bool b_real_only)
     FILE *fp = fopen(fname.c_str(), "w");
     if (fp == NULL)
     {
-        std::cout << "cannot open file " << fname.c_str() << "to write" << std::endl;
+        DEEP_OUT << "cannot open file " << fname.c_str() << "to write" << std::endl;
     }
     else
     {
@@ -3731,18 +3732,18 @@ bool fid_2d::read_sparky(std::string infname)
 
     if (fp == NULL)
     {
-        std::cout << "Can't open " << infname << " to read." << std::endl;
+        DEEP_OUT << "Can't open " << infname << " to read." << std::endl;
         return false;
     }
 
     fread(buffer, 1, 10, fp);
-    // std::cout<<buffer<<std::endl;
+    // DEEP_OUT<<buffer<<std::endl;
 
     fread(buffer, 1, 1, fp);
     temp = int(buffer[0]);
     if (temp != 2)
     {
-        std::cout << "Error in sparky format file, dimension is not 2" << std::endl;
+        DEEP_OUT << "Error in sparky format file, dimension is not 2" << std::endl;
         return false;
     }
 
@@ -3751,12 +3752,12 @@ bool fid_2d::read_sparky(std::string infname)
     temp = int(buffer[0]);
     if (temp != 1)
     {
-        std::cout << "Error in sparky format file, it is not in real data" << std::endl;
+        DEEP_OUT << "Error in sparky format file, it is not in real data" << std::endl;
         return false;
     }
 
     fread(buffer, 1, 1, fp);
-    // std::cout<<"Version is "<< int(buffer[0])<<std::endl;
+    // DEEP_OUT<<"Version is "<< int(buffer[0])<<std::endl;
     fseek(fp, 166, SEEK_CUR);
 
     // read 2d header
@@ -3765,7 +3766,7 @@ bool fid_2d::read_sparky(std::string infname)
     int tile1, tile2;
 
     fread(buffer, 1, 6, fp); // nuleus name
-    std::cout << "Indirect dimension nuleus " << buffer << std::endl;
+    DEEP_OUT << "Indirect dimension nuleus " << buffer << std::endl;
     fseek(fp, 2, SEEK_CUR);
     ndata_frq_indirect = read_int(fp);
     fseek(fp, 4, SEEK_CUR);
@@ -3776,7 +3777,7 @@ bool fid_2d::read_sparky(std::string infname)
     fseek(fp, 96, SEEK_CUR);
 
     fread(buffer, 1, 6, fp); // nuleus name
-    std::cout << "Direct dimension nuleus " << buffer << std::endl;
+    DEEP_OUT << "Direct dimension nuleus " << buffer << std::endl;
     fseek(fp, 2, SEEK_CUR);
     ndata_frq = read_int(fp);
     fseek(fp, 4, SEEK_CUR);
@@ -3835,11 +3836,11 @@ bool fid_2d::read_sparky(std::string infname)
     origin_frequency = center1 * observed_frequency - spectral_width / 2;
     origin_frequency_indirect = center2 * observed_frequency_indirect - spectral_width_indirect / 2;
 
-    std::cout << "Spectrum width are " << spectral_width << " Hz and " << spectral_width_indirect << " Hz" << std::endl;
-    std::cout << "Fields are " << observed_frequency << " mHz and " << observed_frequency_indirect << " mHz" << std::endl;
-    std::cout << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
-    std::cout << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
-    std::cout << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm" << std::endl;
+    DEEP_OUT << "Spectrum width are " << spectral_width << " Hz and " << spectral_width_indirect << " Hz" << std::endl;
+    DEEP_OUT << "Fields are " << observed_frequency << " mHz and " << observed_frequency_indirect << " mHz" << std::endl;
+    DEEP_OUT << "Direct dimension size is " << ndata_frq << " indirect dimension is " << ndata_frq_indirect << std::endl;
+    DEEP_OUT << "  Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
+    DEEP_OUT << "Indirect dimension offset is " << begin2 << ", ppm per steo is " << step2 << " ppm" << std::endl;
 
     fclose(fp);
 
@@ -3848,7 +3849,7 @@ bool fid_2d::read_sparky(std::string infname)
 
 void fid_2d::estimate_noise_level_mad()
 {
-    std::cout << "In noise estimation, ndata_frq*ydim is " << ndata_frq * ndata_frq_indirect << std::endl;
+    DEEP_OUT << "In noise estimation, ndata_frq*ydim is " << ndata_frq * ndata_frq_indirect << std::endl;
 
     std::vector<float> t(spect, spect + ndata_frq * ndata_frq_indirect);
 
@@ -3866,9 +3867,9 @@ void fid_2d::estimate_noise_level_mad()
         noise_level = 0.1; // artificail spectrum w/o noise
 
     // noise_level=87353.0;
-    // std::cout<<"ERROR: set noise level to "<<noise_level<<std::endl;
+    // DEEP_OUT<<"ERROR: set noise level to "<<noise_level<<std::endl;
 
-    std::cout << "First round, noise level is " << noise_level << std::endl;
+    DEEP_OUT << "First round, noise level is " << noise_level << std::endl;
 
     std::vector<int> flag(ndata_frq * ndata_frq_indirect, 0); // flag
 
@@ -3908,7 +3909,7 @@ void fid_2d::estimate_noise_level_mad()
     noise_level = scores[scores.size() / 2] * 1.4826;
     if (noise_level <= 0.0)
         noise_level = 0.1; // artificail spectrum w/o noise
-    std::cout << "Final noise level is estiamted to be " << noise_level << std::endl;
+    DEEP_OUT << "Final noise level is estiamted to be " << noise_level << std::endl;
 
     // estimate noise level column by column for TOCSY t1 noise belt identification!!
     for (int i = 0; i < ndata_frq; i++)
@@ -3939,7 +3940,7 @@ void fid_2d::estimate_noise_level_mad()
 
 void fid_2d::estimate_noise_level()
 {
-    std::cout << "In noise estimation, ndata_frq*ydim is " << ndata_frq * ndata_frq_indirect << std::endl;
+    DEEP_OUT << "In noise estimation, ndata_frq*ydim is " << ndata_frq * ndata_frq_indirect << std::endl;
 
     int n_segment_x = ndata_frq / 32;
     int n_segment_y = ndata_frq_indirect / 32;
@@ -3996,7 +3997,7 @@ void fid_2d::estimate_noise_level()
     std::vector<float> variances_sorted = variances;
     sort(variances_sorted.begin(), variances_sorted.end());
     noise_level = sqrt(variances_sorted[variances_sorted.size() / 2]);
-    std::cout << "Noise level is " << noise_level << " using variance estimation." << std::endl;
+    DEEP_OUT << "Noise level is " << noise_level << " using variance estimation." << std::endl;
 
     /**
      * loop through maximal_values, remove the ones that are larger than 10.0*noise_level
@@ -4018,7 +4019,7 @@ void fid_2d::estimate_noise_level()
     sort(variances_sorted.begin(), variances_sorted.end());
     noise_level = sqrt(variances_sorted[variances_sorted.size() / 2]);
 
-    std::cout << "Final noise level is estiamted to be " << noise_level << std::endl;
+    DEEP_OUT << "Final noise level is estiamted to be " << noise_level << std::endl;
 
     // estimate noise level column by column for TOCSY t1 noise belt identification!!
     for (int i = 0; i < ndata_frq; i++)

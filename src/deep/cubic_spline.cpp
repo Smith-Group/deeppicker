@@ -1,4 +1,5 @@
 #include "cubic_spline.h"
+#include "deep_output.h"
 
 /**
  * @brief Construct a new cublic spline::cublic spline object
@@ -29,7 +30,7 @@ bool cublic_spline::calculate_coefficients(const std::vector<T> &y)
 
     if (n < 14)
     {
-        std::cerr << "Error: cubic spline alrorithm implemented here requires at least 15 points." << std::endl;
+        DEEP_ERR << "Error: cubic spline alrorithm implemented here requires at least 15 points." << std::endl;
         return false;
     }
 

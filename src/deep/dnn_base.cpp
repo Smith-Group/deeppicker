@@ -1,5 +1,7 @@
 #include <cmath>
 #include <algorithm>
+
+#include "deep_output.h"
 #include "dnn_base.h"
 
 pool1d::pool1d(){};
@@ -95,14 +97,14 @@ bool base1d::print()
 {
     for (int i = 0; i < kernel.size(); i++)
     {
-        std::cout<< kernel[i]<<" ";
+        DEEP_OUT<< kernel[i]<<" ";
     }
-    std::cout<<std::endl;
+    DEEP_OUT<<std::endl;
     for (int i = 0; i < bias.size(); i++)
     {
-        std::cout<< bias[i]<<" ";
+        DEEP_OUT<< bias[i]<<" ";
     }
-    std::cout<<std::endl;
+    DEEP_OUT<<std::endl;
     return true;
 };
 
@@ -179,9 +181,9 @@ bool dense::predict(int nlen, std::vector<float> &input, std::vector<float> &out
 
     mat_mul(input,kernel,output,nlen,ninput,nfilter);
 
-    // std::cout<<"in dense::predict, out is"<<std::endl;
-    // for(int i=0;i<kernel.size();i++) std::cout<<kernel[i]<<" ";
-    // std::cout<<std::endl;
+    // DEEP_OUT<<"in dense::predict, out is"<<std::endl;
+    // for(int i=0;i<kernel.size();i++) DEEP_OUT<<kernel[i]<<" ";
+    // DEEP_OUT<<std::endl;
 
 
     //apply bias

@@ -17,6 +17,7 @@
 #endif
 
 #include "commandline.h"
+#include "deep_output.h"
 #include "dnn_picker.h"
 #include "spectrum_pick.h"
 
@@ -173,7 +174,7 @@ bool spectrum_pick::adjust_ppp_of_spectrum(double target_ppp)
      * We will do along the direct dimension (x) first to be more efficient
     */
     double current_interpolation_step_direct=ppp_direct/target_ppp;
-    std::cout<<"Interpolation step size is "<<current_interpolation_step_direct<<" in direct dimension."<<std::endl;
+    DEEP_OUT<<"Interpolation step size is "<<current_interpolation_step_direct<<" in direct dimension."<<std::endl;
 
     /**
      * Now we need to interpolate the spectrum
@@ -223,7 +224,7 @@ bool spectrum_pick::adjust_ppp_of_spectrum(double target_ppp)
      * y_dim_new is the new size of the spectrum along indirect (y) dimension
      */
     double current_interpolation_step_indirect=ppp_indirect/target_ppp;
-    std::cout<<"Interpolation step size is "<<current_interpolation_step_indirect<<" in indirect dimension."<<std::endl;
+    DEEP_OUT<<"Interpolation step size is "<<current_interpolation_step_indirect<<" in indirect dimension."<<std::endl;
     int ydim_new = int(std::round(ndata_frq_indirect / current_interpolation_step_indirect));
 
     /**
@@ -282,12 +283,12 @@ bool spectrum_pick::adjust_ppp_of_spectrum(double target_ppp)
      * re-estimate fwhh of spectrum and print out the result
     */
     get_median_peak_width(ppp_direct,ppp_indirect); //defined in base class spectrum_fwhh
-    std::cout<<"After interpolation, median peak width is "<<ppp_direct<<" in direct dimension, "<<ppp_indirect<<" in indirect dimension."<<std::endl;
+    DEEP_OUT<<"After interpolation, median peak width is "<<ppp_direct<<" in direct dimension, "<<ppp_indirect<<" in indirect dimension."<<std::endl;
     /**
      * print spectrum size and new step1,step2 to inform user
     */
-    std::cout<<"After interpolation, spectrum size is "<<ndata_frq<<" "<<ndata_frq_indirect<<std::endl;
-    std::cout<<"After interpolation, step1,step2 is "<<step1<<" "<<step2<<std::endl;
+    DEEP_OUT<<"After interpolation, spectrum size is "<<ndata_frq<<" "<<ndata_frq_indirect<<std::endl;
+    DEEP_OUT<<"After interpolation, step1,step2 is "<<step1<<" "<<step2<<std::endl;
 
     /**
      * Keep track of total interpolation step size
@@ -374,7 +375,7 @@ bool spectrum_pick::ann_peak_picking(int flag, int flag_t1_noise, bool b_negativ
             p2.erase(p2.begin() + i);
         }
     }
-    std::cout<<"Picked "<<p1.size()<<" peaks."<<std::endl;
+    DEEP_OUT<<"Picked "<<p1.size()<<" peaks."<<std::endl;
 
 
     //remove peaks using column by column noise estimation
@@ -398,7 +399,7 @@ bool spectrum_pick::ann_peak_picking(int flag, int flag_t1_noise, bool b_negativ
                 p2.erase(p2.begin() + i);
             }
         }
-        std::cout<<"Number of peak is "<<p1.size()<<" after T1 noise removal."<<std::endl;  
+        DEEP_OUT<<"Number of peak is "<<p1.size()<<" after T1 noise removal."<<std::endl;  
     }
 
 
@@ -433,8 +434,8 @@ bool spectrum_pick::ann_peak_picking(int flag, int flag_t1_noise, bool b_negativ
     median_width_x=ldw_math_spectrum_2d::calcualte_median(sx);
     median_width_y=ldw_math_spectrum_2d::calcualte_median(sy);
 
-    std::cout<<"Median peak width is estimated to be "<<median_width_x<<" "<<median_width_y<< " from ann picking."<<std::endl;
-    std::cout<<"On original spectrum without interpolation, median peak width is "<<median_width_x*interpolation_step_direct<<" "<<median_width_y*interpolation_step_indirect<<std::endl;
+    DEEP_OUT<<"Median peak width is estimated to be "<<median_width_x<<" "<<median_width_y<< " from ann picking."<<std::endl;
+    DEEP_OUT<<"On original spectrum without interpolation, median peak width is "<<median_width_x*interpolation_step_direct<<" "<<median_width_y*interpolation_step_indirect<<std::endl;
 
     return true;
 };
@@ -540,4 +541,3 @@ bool spectrum_pick::print_peaks_picking(std::string outfname)
 
     return 1;
 };
-

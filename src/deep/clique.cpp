@@ -10,6 +10,7 @@
 #include <algorithm>
 
 #include "clique.h"
+#include "deep_output.h"
 
 //#define MY_DEBUG
 
@@ -94,13 +95,13 @@ void cmaxclique::bk2(int c,std::vector<int> r, std::vector<int> p, std::vector<i
         if(r.size()>=2)
         {
             std::vector<int> t_int;
-            //std::cout<<counter++<<": Level "<<c<<" Max clique: ";
+            //DEEP_OUT<<counter++<<": Level "<<c<<" Max clique: ";
             for(int i=0;i<r.size();i++)
             {
-                //std::cout<<r[i]+1<<" ";
+                //DEEP_OUT<<r[i]+1<<" ";
                 t_int.push_back(r[i]);
             }
-            //std::cout<<std::endl;
+            //DEEP_OUT<<std::endl;
             clique.push_back(t_int);
         }
         return;
@@ -140,17 +141,17 @@ void cmaxclique::bk2(int c,std::vector<int> r, std::vector<int> p, std::vector<i
         
 #ifdef MY_DEBUG
         for(int i=0;i<c-2;i++)
-            std::cout<<" ";
-        std::cout<<c<<" r:";
+            DEEP_OUT<<" ";
+        DEEP_OUT<<c<<" r:";
         for(int i=0;i<r.size();i++)
-            std::cout<<r[i]+1<<" ";
-        std::cout<<"p: ";
+            DEEP_OUT<<r[i]+1<<" ";
+        DEEP_OUT<<"p: ";
         for(int i=0;i<p.size();i++)
-            std::cout<<p[i]+1<<" ";
-        std::cout<<"x: ";
+            DEEP_OUT<<p[i]+1<<" ";
+        DEEP_OUT<<"x: ";
         for(int i=0;i<x.size();i++)
-            std::cout<<x[i]+1<<" ";
-        std::cout<<std::endl;
+            DEEP_OUT<<x[i]+1<<" ";
+        DEEP_OUT<<std::endl;
 #endif
         
         bk2(c,r0,p0,x0);
@@ -180,9 +181,9 @@ void cmaxclique::init(std::vector< std::vector< int> > *n)
         nneighbor.push_back(c);
     }
 
-    // std::cout<<"In cmaxclique, npeak is "<<npeak<<" and neighbor is: "<<std::endl;
-    // for(int i=0;i<npeak*npeak;i++) std::cout<<neighbor[i]<<" ";
-    // std::cout<<std::endl;
+    // DEEP_OUT<<"In cmaxclique, npeak is "<<npeak<<" and neighbor is: "<<std::endl;
+    // for(int i=0;i<npeak*npeak;i++) DEEP_OUT<<neighbor[i]<<" ";
+    // DEEP_OUT<<std::endl;
 
 
     return;
@@ -235,19 +236,18 @@ void cmaxclique::add_orphan()
 
 std::vector< std::vector<int> > cmaxclique::output()
 {
-    // std::cout<<"In cmaxlcique, Cliques are:"<<std::endl;
+    // DEEP_OUT<<"In cmaxlcique, Cliques are:"<<std::endl;
     // for(int i=0;i<clique.size();i++)
     // {
     //     for(int j=0;j<clique[i].size();j++)
     //     {
-    //         std::cout<<clique[i][j]<<" ";
+    //         DEEP_OUT<<clique[i][j]<<" ";
     //     }
-    //     std::cout<<std::endl;
+    //     DEEP_OUT<<std::endl;
     // }
-    // std::cout<<"**************************"<<std::endl;
+    // DEEP_OUT<<"**************************"<<std::endl;
 
 
 
     return clique;
 }
-

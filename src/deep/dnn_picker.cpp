@@ -16,6 +16,7 @@
 #include "cubic_spline.h"
 
 #include "clique.h"
+#include "deep_output.h"
 #include "dnn_base.h"
 #include "dnn_picker.h"
 
@@ -115,7 +116,7 @@ namespace ldw_math_dnn
         double px=evecs(0,1);
         double py=evecs(0,0);
         
-        std::cout<<"xdim="<<xdim<<" ydim="<<ydim<<" sx="<<sx<<" sy="<<sy<<" ss="<<ss<<" cov matrix is "<<xx/ss<<" "<<yy/ss<<" "<<xy/ss<<" px="<<px<<"  py="<<py<<std::endl;
+        DEEP_OUT<<"xdim="<<xdim<<" ydim="<<ydim<<" sx="<<sx<<" sy="<<sy<<" ss="<<ss<<" cov matrix is "<<xx/ss<<" "<<yy/ss<<" "<<xy/ss<<" px="<<px<<"  py="<<py<<std::endl;
 
         double til=std::min(fabs(px),fabs(py));
         if(til>0.13 && til<0.62)  //7.5 degree to 38 degree
@@ -739,7 +740,7 @@ bool peak1d::predict_step2()
 
     for(int k=p_type.size()-1;k>=0;k--)
     {
-        // std::cout<<k<<" "<<ps[k]<<" "<<vs[k]<<" "<<p_type[k]<<std::endl;
+        // DEEP_OUT<<k<<" "<<ps[k]<<" "<<vs[k]<<" "<<p_type[k]<<std::endl;
         if(p_type[k]==2)  //remove remaining potential peak
         {
             p_type.erase(p_type.begin()+k);
@@ -774,7 +775,7 @@ bool peak1d::predict_step2()
             g=output2[pos*8+3]*10.0;
             con=1.0-output1[pos*3];
         }
-        // std::cout<<"pos="<<pos<<" con="<<con<<std::endl;
+        // DEEP_OUT<<"pos="<<pos<<" con="<<con<<std::endl;
         
         bool b_tonear=0;
         for(int k=0;k<centes.size();k++)
@@ -939,8 +940,8 @@ bool peak1d::predict_step2()
 
     if(posits.size()!=confidence.size())
     {
-        std::cout<<"ERROR, inconsistent size of pos and confidence in class peak1d."<<std::endl;
-        std::cout<<"Sizes are "<<posits.size()<<" "<<centes.size()<<" "<<sigmas.size()<<" "<<gammas.size()<<" "<<intens.size()<<" "<<confidence.size()<<std::endl;
+        DEEP_OUT<<"ERROR, inconsistent size of pos and confidence in class peak1d."<<std::endl;
+        DEEP_OUT<<"Sizes are "<<posits.size()<<" "<<centes.size()<<" "<<sigmas.size()<<" "<<gammas.size()<<" "<<intens.size()<<" "<<confidence.size()<<std::endl;
     }
 
     return true;
@@ -1177,7 +1178,7 @@ bool peak2d::predict_step1()
                 s=min_positions[bs[k]-1];
                 final_segment_begin.push_back(b);
                 final_segment_stop.push_back(s);
-                // std::cout<<"Cut into "<<b<<" - "<<s<<std::endl;
+                // DEEP_OUT<<"Cut into "<<b<<" - "<<s<<std::endl;
             }
         }
 
@@ -1221,7 +1222,7 @@ bool peak2d::predict_step1()
                 counter++;
             }
         }
-        if((i+1)%500==0) {std::cout<<"Finish "<<i+1<<" columns out of "<<xdim<<std::endl;}
+        if((i+1)%500==0) {DEEP_OUT<<"Finish "<<i+1<<" columns out of "<<xdim<<std::endl;}
     }
 #ifdef LDW_DEBUG
     fout1.close();
@@ -1316,7 +1317,7 @@ bool peak2d::predict_step1()
                 s=min_positions[bs[k]-1];
                 final_segment_begin.push_back(b);
                 final_segment_stop.push_back(s);
-                // std::cout<<"Cut into "<<b<<" - "<<s<<std::endl;
+                // DEEP_OUT<<"Cut into "<<b<<" - "<<s<<std::endl;
             }
         }
 
@@ -1360,7 +1361,7 @@ bool peak2d::predict_step1()
                 counter++;
             }
         }
-        if((i+1)%500==0) {std::cout<<"Finish "<<i+1<<" rows out of "<<ydim<<std::endl;}
+        if((i+1)%500==0) {DEEP_OUT<<"Finish "<<i+1<<" rows out of "<<ydim<<std::endl;}
     }
 #ifdef LDW_DEBUG
     fout2.close();
@@ -1608,18 +1609,18 @@ std::vector<int>  peak2d::select_max_nonoverlap_set(std::vector<int> tx,std::vec
     //some debug code
     
     //print out max_clique and ndxs
-    std::cout<<"max_clique: ";
+    DEEP_OUT<<"max_clique: ";
     for(int i=0;i<max_clique.size();i++)
     {
-        std::cout<<max_clique[i]<<" ";
+        DEEP_OUT<<max_clique[i]<<" ";
     }
-    std::cout<<std::endl;
-    std::cout<<"ndxs: ";
+    DEEP_OUT<<std::endl;
+    DEEP_OUT<<"ndxs: ";
     for(int i=0;i<ndxs.size();i++)
     {
-        std::cout<<ndxs[i]<<" ";
+        DEEP_OUT<<ndxs[i]<<" ";
     }
-    std::cout<<std::endl;
+    DEEP_OUT<<std::endl;
 
 
     return ndxs;
@@ -1707,14 +1708,14 @@ bool peak2d::predict_step3()
         p_2_line_row.push_back(rl_row.coeff(ndxx,ndxy)-1);
         // p_2_line_row.push_back(rl_row[ndxx * ydim + ndxy]);
     }
-    // std::cout<<"Size of matrix are "<<rl_column.nonZeros()<<" "<<rl_column_p.nonZeros()<<" "<<rl_row.nonZeros()<<" "<<rl_row_p.nonZeros()<<std::endl;
+    // DEEP_OUT<<"Size of matrix are "<<rl_column.nonZeros()<<" "<<rl_column_p.nonZeros()<<" "<<rl_row.nonZeros()<<" "<<rl_row_p.nonZeros()<<std::endl;
     //we do not need rl_column,rl_column_p, rl_row or rl_row_p from here. clear them to save memory!!
     rl_column.resize(0,0);
     rl_column_p.resize(0,0);
     rl_row.resize(0,0);
     rl_row_p.resize(0,0);
 
-    // std::cout<<"Size of matrix are "<<rl_column.nonZeros()<<" "<<rl_column_p.nonZeros()<<" "<<rl_row.nonZeros()<<" "<<rl_row_p.nonZeros()<<std::endl;
+    // DEEP_OUT<<"Size of matrix are "<<rl_column.nonZeros()<<" "<<rl_column_p.nonZeros()<<" "<<rl_row.nonZeros()<<" "<<rl_row_p.nonZeros()<<std::endl;
     // check_special_peaks_1(); //actually do nothing in this function. Kept here for future consideration only !!
 
 #ifdef LDW_DEBUG
@@ -1794,7 +1795,7 @@ bool peak2d::predict_step3()
                     spectrum_of_peaks[i][(ii - i0) * (j1 - j0) + jj - j0]=z1/z2*spectrum_column[ii * ydim + jj];
                 }
             }
-            std::cout<<i<<" "<<cx[i]+1<<" "<<cy[i]+1<<std::endl;
+            DEEP_OUT<<i<<" "<<cx[i]+1<<" "<<cy[i]+1<<std::endl;
             axis_til.push_back(ldw_math_dnn::calcualte_principal_axis(spectrum_of_peaks[i],i1-i0,j1-j0));
         }
     
@@ -1850,7 +1851,7 @@ bool peak2d::predict_step3()
 
             int x_int=int(cx[i]+0.5);
             int y_int=int(cy[i]+0.5);
-            // std::cout<<"i="<<i<<" x="<<cx[i]<<" y="<<cy[i]<<std::endl;
+            // DEEP_OUT<<"i="<<i<<" x="<<cx[i]<<" y="<<cy[i]<<std::endl;
             for(int j=0;j<title_angle_x.size();j++)
             {
                 std::vector<double> target_line,target_line_x,target_line_y;
@@ -1935,16 +1936,16 @@ bool peak2d::predict_step3()
                     new_peak2_gamma.push_back(p1.gammas[kk[1]]);
                     
                 }
-                // std::cout<<"j="<<j<<" and size of add peak is "<<kk.size()<<" out of "<<p1.posits.size()<<std::endl;
+                // DEEP_OUT<<"j="<<j<<" and size of add peak is "<<kk.size()<<" out of "<<p1.posits.size()<<std::endl;
             }
 
-            std::cout<<"Potential new peak groups:"<<std::endl;
+            DEEP_OUT<<"Potential new peak groups:"<<std::endl;
             for(int j=0;j<new_peak1_x.size();j++)
             {
-                std::cout<<new_peak_tiltx[j]<<" "<<new_peak1_x[j]<<" "<<new_peak1_y[j]<<" "<<new_peak2_x[j]<<" "<<new_peak2_y[j]<<std::endl;
+                DEEP_OUT<<new_peak_tiltx[j]<<" "<<new_peak1_x[j]<<" "<<new_peak1_y[j]<<" "<<new_peak2_x[j]<<" "<<new_peak2_y[j]<<std::endl;
             }
 
-            std::cout<<"finish check peak "<<i<<" at coor: "<<cx[i]+1<<" "<<cy[i]+1<<std::endl;
+            DEEP_OUT<<"finish check peak "<<i<<" at coor: "<<cx[i]+1<<" "<<cy[i]+1<<std::endl;
 
             if(new_peak1_x.size()>1)  //2 or more peaks.
             {
@@ -1984,13 +1985,13 @@ bool peak2d::predict_step3()
                         if(abs(max_ele_pos-22)<=2)
                         {
                             b_add=true;
-                            std::cout<<"ADD new peak at: "<<new_peak1_x[pos]<<" "<<new_peak1_y[pos]<<" and "<<new_peak2_x[pos]<<" "<<new_peak2_y[pos]<<std::endl;
+                            DEEP_OUT<<"ADD new peak at: "<<new_peak1_x[pos]<<" "<<new_peak1_y[pos]<<" and "<<new_peak2_x[pos]<<" "<<new_peak2_y[pos]<<std::endl;
                             fnewpeak<<cx[i]<<" "<<cy[i]<<" "<<new_peak1_x[pos]<<" "<<new_peak1_y[pos]<<" "<<new_peak2_x[pos]<<" "<<new_peak2_y[pos]<<std::endl;
                         }
                     }
                     if(b_add==false)
                     {
-                        std::cout<<"Potential new peak at: "<<new_peak1_x[pos]<<" "<<new_peak1_y[pos]<<" and "<<new_peak2_x[pos]<<" "<<new_peak2_y[pos]<<std::endl;
+                        DEEP_OUT<<"Potential new peak at: "<<new_peak1_x[pos]<<" "<<new_peak1_y[pos]<<" and "<<new_peak2_x[pos]<<" "<<new_peak2_y[pos]<<std::endl;
                     }
                 }
 
@@ -2024,7 +2025,7 @@ bool peak2d::cut_one_peak_v2(std::vector<int> & line_x,std::vector<int> & line_y
     }
     if(anchor_pos==-1)
     {
-        std::cout<<"Something is wrong in cut_one_peak_v2"<<std::endl;
+        DEEP_OUT<<"Something is wrong in cut_one_peak_v2"<<std::endl;
         return false;
     }
 
@@ -2356,7 +2357,7 @@ bool::peak2d::check_special_peaks_1()
         }
         if(peak_neighbor_cr[i]>=0 && peak_neighbor_cr[i]==peak_neighbor_rc[i])
         {
-            // std::cout<<"found quater at peak "<<cx[i]<<" "<<cy[i]<<std::endl;
+            // DEEP_OUT<<"found quater at peak "<<cx[i]<<" "<<cy[i]<<std::endl;
             //lable removal of 2 out of 4 here.
             double a1=inten[i];
             double a2=inten[peak_neighbor_r[i]];
@@ -2444,10 +2445,10 @@ bool peak2d::check_special_peaks_2()
 
                 if(a1/a2<=4.0 && a2/a1<=4.0 && r>=0.1)
                 {
-                    // std::cout<<"A are "<<a1<<" "<<a1<<std::endl;
+                    // DEEP_OUT<<"A are "<<a1<<" "<<a1<<std::endl;
                     int k3=p_2_line_column[k1];
                     int k4=p_2_line_column[k2];
-                    // std::cout<<"they belong to column line "<<k3<<" and "<<k4<<std::endl;
+                    // DEEP_OUT<<"they belong to column line "<<k3<<" and "<<k4<<std::endl;
 
                     int b,s;
                     if(k3==0) b=0;
@@ -2484,7 +2485,7 @@ bool peak2d::check_special_peaks_2()
                         peak_exclude[k1]=1;
                         peak_exclude[k2]=1;
                     }
-                    // std::cout<<std::endl;
+                    // DEEP_OUT<<std::endl;
                 }
             }
         }
@@ -2551,7 +2552,7 @@ bool peak2d::check_special_peaks_2()
                         peak_exclude[k1]=1;
                         peak_exclude[k2]=1;
                     }
-                    // std::cout<<std::endl;
+                    // DEEP_OUT<<std::endl;
                 }
             }
         }
@@ -2571,7 +2572,7 @@ bool peak2d::check_special_peaks_3()
 
     for(int i=npeak_current-1;i>=0;i--)
     {
-        // std::cout<<"check_special_case for peak "<<i<<" is started."<<std::endl;
+        // DEEP_OUT<<"check_special_case for peak "<<i<<" is started."<<std::endl;
 
         // if(peak_exclude[i]==1) continue;
         if( inten[i] < noise_level * user_scale ) continue;
@@ -2616,8 +2617,8 @@ bool peak2d::check_special_peaks_3()
 
         // if( (cx[i]==1274 && (cy[i]==1521 || cy[i]==1522)) || (cx[i]==1076 && cy[i]==846))
         // {
-        //     std::cout<<"x is from "<<*result_x.first<<" to "<<*result_x.second<<std::endl;
-        //     std::cout<<"y is from "<<*result_y.first<<" to "<<*result_y.second<<std::endl;
+        //     DEEP_OUT<<"x is from "<<*result_x.first<<" to "<<*result_x.second<<std::endl;
+        //     DEEP_OUT<<"y is from "<<*result_y.first<<" to "<<*result_y.second<<std::endl;
         // }
         
         int n_min=6;  //model 2 and 3
@@ -2645,7 +2646,7 @@ bool peak2d::check_special_peaks_3()
         
 
         check_special_case(i,fwhhx,fwhhy,cline_x,cline_y,cline_ndx,rline_x,rline_y,rline_ndx,new_x,new_y,new_cline_ndx,new_rline_ndx);
-        // std::cout<<"check_special_case for peak "<<i<<" is done."<<std::endl;
+        // DEEP_OUT<<"check_special_case for peak "<<i<<" is done."<<std::endl;
 
         if(new_x.size()>0)
         {
@@ -2748,7 +2749,7 @@ bool peak2d::get_tilt_of_line(const int flag, const int x,const int y,const doub
                 }
             }
         }
-        // std::cout<<std::endl;
+        // DEEP_OUT<<std::endl;
     }
 
     k1m+=std::max(ndx-cut2,0);
@@ -2808,22 +2809,22 @@ bool peak2d::check_special_case(const int ndx,const double fx,const double fy,
     // if( (x==1274 && (y==1521 || y==1522)) || (x==1076 && y==846))
     // if( x==1390 && y==222 ) //pseudo/g12d_gtp_cpmg/first
     // {
-    //     std::cout<<"cline:"<<std::endl;
+    //     DEEP_OUT<<"cline:"<<std::endl;
     //     for(int i=0;i<cline_x.size();i++)
     //     {
-    //         std::cout<<cline_x[i]<<" "<<cline_y[i]<<std::endl;
+    //         DEEP_OUT<<cline_x[i]<<" "<<cline_y[i]<<std::endl;
     //     }
-    //     std::cout<<"rline:"<<std::endl;
+    //     DEEP_OUT<<"rline:"<<std::endl;
     //     for(int i=0;i<rline_x.size();i++)
     //     {
-    //         std::cout<<rline_x[i]<<" "<<rline_y[i]<<std::endl;
+    //         DEEP_OUT<<rline_x[i]<<" "<<rline_y[i]<<std::endl;
     //     }
-    //     std::cout<<"ratio1="<<ratio1<<" ratio2="<<ratio2<<std::endl;
+    //     DEEP_OUT<<"ratio1="<<ratio1<<" ratio2="<<ratio2<<std::endl;
     // }
 
     if( (b1 || b2) && (check_near_peak(x,y,cline_x[k1],cline_y[k1]) && check_near_peak(x,y,rline_x[m1],rline_y[m1]) && check_near_peak(x,y,cline_x[k2],cline_y[k2]) && check_near_peak(x,y,rline_x[m2],rline_y[m2])) )
     {
-        // std::cout<<"Add addtional peaks because ratio 1 is "<<ratio1<<" and ratio2 is"<<ratio2<<" from peak "<<x<<" "<<y<<std::endl;
+        // DEEP_OUT<<"Add addtional peaks because ratio 1 is "<<ratio1<<" and ratio2 is"<<ratio2<<" from peak "<<x<<" "<<y<<std::endl;
         if(b1)
         {
             potential_x1=int(double(cline_x[k1]+rline_x[m1])/2.0);
@@ -3039,7 +3040,7 @@ bool peak2d::find_lines(int xd, int yd, std::vector<int> r, std::vector<int> &x0
                     y.erase(y.begin()+current_length,y.end());   
                     ndx.erase(ndx.begin()+current_length,ndx.end());
                 }
-                // std::cout<<"current length of line is "<<current_length<<std::endl;
+                // DEEP_OUT<<"current length of line is "<<current_length<<std::endl;
             }
         }
     }
@@ -3055,11 +3056,11 @@ bool peak2d::find_lines(int xd, int yd, std::vector<int> r, std::vector<int> &x0
 bool peak2d::predict()
 {
     predict_step1();
-    std::cout<<"Finished 1D prediction."<<std::endl;
+    DEEP_OUT<<"Finished 1D prediction."<<std::endl;
     predict_step2();
-    std::cout<<"Get lines from dots. Done."<<std::endl;
+    DEEP_OUT<<"Get lines from dots. Done."<<std::endl;
     predict_step3();
-    std::cout<<"Finished ANN peak picking."<<std::endl;
+    DEEP_OUT<<"Finished ANN peak picking."<<std::endl;
     return true;
 }
 

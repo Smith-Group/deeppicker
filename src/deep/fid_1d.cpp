@@ -21,6 +21,7 @@ using namespace emscripten;
 
 #include "kiss_fft.h"
 
+#include "deep_output.h"
 #include "json/json.h"
 #include "fid_1d.h"
 
@@ -52,7 +53,7 @@ namespace ldw_math_spectrum_1d
             file_name_full = str;
         }
 
-        // std::cout<<"file_name_full is "<<file_name_full<<std::endl;
+        // DEEP_OUT<<"file_name_full is "<<file_name_full<<std::endl;
 
         found = file_name_full.find_last_of(".");
         if (found != std::string::npos)
@@ -67,9 +68,9 @@ namespace ldw_math_spectrum_1d
             file_name = file_name_full;
         }
 
-        // std::cout<<"path is "<<path_name<<std::endl;
-        // std::cout<<"file_name is "<<file_name<<std::endl;
-        // std::cout<<"file_name_ext is "<<file_name_ext<<std::endl;
+        // DEEP_OUT<<"path is "<<path_name<<std::endl;
+        // DEEP_OUT<<"file_name is "<<file_name<<std::endl;
+        // DEEP_OUT<<"file_name_ext is "<<file_name_ext<<std::endl;
 
         return b;
     };
@@ -535,7 +536,7 @@ apodization::apodization(std::string apodization_string)
         }
         else
         {
-            std::cerr << "Error: apodization function name must be sp or none." << std::endl;
+            DEEP_ERR << "Error: apodization function name must be sp or none." << std::endl;
             return;
         }
     }
@@ -626,7 +627,7 @@ bool fid_base::read_jcamp(std::string file_name, std::map<std::string, std::stri
     std::ifstream infile(file_name.c_str());
     if (!infile.is_open())
     {
-        std::cout << "Error: cannot open file " << file_name << std::endl;
+        DEEP_OUT << "Error: cannot open file " << file_name << std::endl;
         return false;
     }
 
@@ -676,7 +677,7 @@ bool fid_base::read_jcamp(std::string file_name, std::map<std::string, std::stri
             }
             else
             {
-                std::cerr << "Warning: cannot parse line " << line << " from file " << file_name << std::endl;
+                DEEP_ERR << "Warning: cannot parse line " << line << " from file " << file_name << std::endl;
             }
         }
         /**
@@ -684,7 +685,7 @@ bool fid_base::read_jcamp(std::string file_name, std::map<std::string, std::stri
          */
         else
         {
-            std::cerr << "Warning: unknown line " << line << " from file " << file_name << std::endl;
+            DEEP_ERR << "Warning: unknown line " << line << " from file " << file_name << std::endl;
         }
     }
 
@@ -750,7 +751,7 @@ bool fid_base::process_jcamp_as_string(const std::string &contents, std::map<std
             }
             else
             {
-                std::cerr << "Warning: cannot parse line " << line << std::endl;
+                DEEP_ERR << "Warning: cannot parse line " << line << std::endl;
             }
         }
         /**
@@ -758,7 +759,7 @@ bool fid_base::process_jcamp_as_string(const std::string &contents, std::map<std
          */
         else
         {
-            std::cerr << "Warning: unknown line " << line << std::endl;
+            DEEP_ERR << "Warning: unknown line " << line << std::endl;
         }
     }
 
@@ -1011,13 +1012,13 @@ bool fid_1d::read_bruker_folder(std::string folder_name)
 
     if (status != 0)
     {
-        std::cout << "Error: folder " << folder_name << " does not exist!" << std::endl;
+        DEEP_OUT << "Error: folder " << folder_name << " does not exist!" << std::endl;
         return false;
     }
     else if (!(sb.st_mode & S_IFDIR))
     {
         // exist but is not a directory
-        std::cout << "Error: folder " << folder_name << " does not exist!" << std::endl;
+        DEEP_OUT << "Error: folder " << folder_name << " does not exist!" << std::endl;
         return false;
     }
 
@@ -1052,7 +1053,7 @@ bool fid_1d::read_bruker_folder(std::string folder_name)
     status = stat(acqus_file_name.c_str(), &sb);
     if (status != 0)
     {
-        std::cout << "Warning: cannot find acqus file in folder " << folder_name << std::endl;
+        DEEP_OUT << "Warning: cannot find acqus file in folder " << folder_name << std::endl;
         return false;
     }
 
@@ -1074,8 +1075,8 @@ bool fid_1d::set_fid_data(const std::vector<float> &fid_data_float_)
 {
     fid_data_float = std::move(fid_data_float_);
     nspectra = fid_data_float.size()/ ndata_bruker; // number of spectra is the size of fid_data_float divided by ndata_bruker
-    std::cout<<"Set fid_data_float with " << fid_data_float.size() << " elements, which is " << nspectra << " spectra." << std::endl;
-    std::cout<<"ndata_bruker is " << ndata_bruker << std::endl;
+    DEEP_OUT<<"Set fid_data_float with " << fid_data_float.size() << " elements, which is " << nspectra << " spectra." << std::endl;
+    DEEP_OUT<<"ndata_bruker is " << ndata_bruker << std::endl;
     return true;
 }
 
@@ -1120,7 +1121,7 @@ bool fid_1d::read_bruker_acqus_and_fid(const std::string &acqus_file_name, const
             fid_data_int.resize(ndata_bruker * nspectra);
             if (nspectra == 0)
             {
-                std::cout << "Error: cannot read " << ndata_bruker << " int32 from file " << fid_data_file_names[i] << std::endl;
+                DEEP_OUT << "Error: cannot read " << ndata_bruker << " int32 from file " << fid_data_file_names[i] << std::endl;
                 return false;
             }
         }
@@ -1144,7 +1145,7 @@ bool fid_1d::read_bruker_acqus_and_fid(const std::string &acqus_file_name, const
             temp_fid_data_double.resize(ndata_bruker * nspectra);
             if (nspectra == 0)
             {
-                std::cout << "Error: cannot read " << ndata_bruker << " double from file " << fid_data_file_names[i] << std::endl;
+                DEEP_OUT << "Error: cannot read " << ndata_bruker << " double from file " << fid_data_file_names[i] << std::endl;
                 return false;
             }
         }
@@ -1170,7 +1171,7 @@ bool fid_1d::read_bruker_acqus_and_fid(const std::string &acqus_file_name, const
         fclose(fp_fid_data);
     }
 
-    std::cout << "Read " << nspectra << " spectra from " << fid_data_file_names.size() << " files" << std::endl;
+    DEEP_OUT << "Read " << nspectra << " spectra from " << fid_data_file_names.size() << " files" << std::endl;
 
     
 
@@ -1210,7 +1211,7 @@ bool fid_1d::process_dictionary()
      */
     if (udict_acqus.find("TD") == udict_acqus.end())
     {
-        std::cout << "Error: cannot find TD in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find TD in acqus file" << std::endl;
         return false;
     }
 
@@ -1258,7 +1259,7 @@ bool fid_1d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find SW_h in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find SW_h in acqus file" << std::endl;
         return false;
     }
 
@@ -1271,7 +1272,7 @@ bool fid_1d::process_dictionary()
     }
     else
     {
-        std::cout << "Warning: cannot find RG in acqus file" << std::endl;
+        DEEP_OUT << "Warning: cannot find RG in acqus file" << std::endl;
         receiver_gain = 1.0; // default
     }
 
@@ -1281,7 +1282,7 @@ bool fid_1d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find SFO1 in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find SFO1 in acqus file" << std::endl;
         return false;
     }
 
@@ -1291,7 +1292,7 @@ bool fid_1d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find O1 in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find O1 in acqus file" << std::endl;
         return false;
     }
 
@@ -1304,7 +1305,7 @@ bool fid_1d::process_dictionary()
     }
     else
     {
-        std::cout << "Error: cannot find GRPDLY in acqus file" << std::endl;
+        DEEP_OUT << "Error: cannot find GRPDLY in acqus file" << std::endl;
         return false;
     }
 
@@ -1314,7 +1315,7 @@ bool fid_1d::process_dictionary()
      */
     if (grpdly <= 0.0)
     {
-        std::cout << "Error: GRPDLY = " << grpdly << " is not supported" << std::endl;
+        DEEP_OUT << "Error: GRPDLY = " << grpdly << " is not supported" << std::endl;
         return false;
     }
 
@@ -1354,7 +1355,7 @@ bool fid_1d::write_nmrpipe_fid(const std::string outfname) const
     FILE *fp = fopen(outfname.c_str(), "wb");
     if (fp == NULL)
     {
-        std::cout << "Error: cannot open file " << outfname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << outfname << std::endl;
         return false;
     }
 
@@ -1456,7 +1457,7 @@ bool fid_1d::run_fft_and_rm_bruker_filter()
         }
         else
         {
-            std::cerr << "Error: cannot allocate memory for fft" << std::endl;
+            DEEP_ERR << "Error: cannot allocate memory for fft" << std::endl;
             return false;
         }
 
@@ -1662,7 +1663,7 @@ bool fid_1d::write_nmrpipe_ft1(std::string outfname)
         FILE *fp = fopen(outfname.c_str(), "wb");
         if (fp == NULL)
         {
-            std::cerr << "Error: cannot open file " << outfname << " for writing" << std::endl;
+            DEEP_ERR << "Error: cannot open file " << outfname << " for writing" << std::endl;
             return false;
         }
         fwrite(nmrpipe_header_data.data(), sizeof(float), 512, fp);
@@ -1685,7 +1686,7 @@ bool fid_1d::write_nmrpipe_ft1(std::string outfname)
                 FILE *fp2 = fopen(outfname2.c_str(), "wb");
                 if (fp2 == NULL)
                 {
-                    std::cerr << "Error: cannot open file " << outfname2 << " for writing" << std::endl;
+                    DEEP_ERR << "Error: cannot open file " << outfname2 << " for writing" << std::endl;
                     return false;
                 }
                 fwrite(nmrpipe_header_data.data(), sizeof(float), 512, fp2);
@@ -1744,7 +1745,7 @@ bool fid_1d::write_spectrum_json(std::string outfname)
     outfile.open(outfname);
     if (!outfile.is_open())
     {
-        std::cout << "Error: cannot open file " << outfname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << outfname << std::endl;
         return false;
     }
 
@@ -1785,7 +1786,7 @@ bool fid_1d::direct_set_spectrum_from_nmrpipe(const std::vector<float> &_header,
 
     if (nmrpipe_header_data[10 - 1] != 1.0f)
     {
-        std::cout << "Wrong file format, dimension (header[9]) is " << nmrpipe_header_data[9] << std::endl;
+        DEEP_OUT << "Wrong file format, dimension (header[9]) is " << nmrpipe_header_data[9] << std::endl;
         return false;
     }
 
@@ -1817,8 +1818,8 @@ bool fid_1d::direct_set_spectrum_from_nmrpipe(const std::vector<float> &_header,
     
     if(n_verbose>0)
     {
-        std::cout << "Spectrum size is " << ndata_frq << std::endl;
-        std::cout << "From " << begin1 << " to " << stop1 << " and step is " << step1 << std::endl;
+        DEEP_OUT << "Spectrum size is " << ndata_frq << std::endl;
+        DEEP_OUT << "From " << begin1 << " to " << stop1 << " and step is " << step1 << std::endl;
     }
 
     if (noise_level < 1e-20)
@@ -1882,8 +1883,8 @@ bool fid_1d::read_spectrum(std::string infname, bool b_negative)
 
     if(n_verbose>0)
     {
-        std::cout << "Spectrum size is " << ndata_frq << std::endl;
-        std::cout << "From " << begin1 << " to " << stop1 << " and step is " << step1 << std::endl;
+        DEEP_OUT << "Spectrum size is " << ndata_frq << std::endl;
+        DEEP_OUT << "From " << begin1 << " to " << stop1 << " and step is " << step1 << std::endl;
     }
 
     if (noise_level < 1e-20)
@@ -1893,7 +1894,7 @@ bool fid_1d::read_spectrum(std::string infname, bool b_negative)
 
     if(b_negative==false)
     {
-        std::cout<<"Set negative data points to zero."<<std::endl;
+        DEEP_OUT<<"Set negative data points to zero."<<std::endl;
         for(int i=0;i<spectrum_real.size();i++)
         {
             spectrum_real[i]=std::max(spectrum_real[i],0.0f);
@@ -2018,7 +2019,7 @@ bool fid_1d::read_spectrum_json(std::string infname)
         }
         else
         {
-            std::cout<<"Error: fid_1d::read_spectrum_json, data2[i] is not double or string."<<std::endl;
+            DEEP_OUT<<"Error: fid_1d::read_spectrum_json, data2[i] is not double or string."<<std::endl;
             return false;
         }
 
@@ -2032,7 +2033,7 @@ bool fid_1d::read_spectrum_json(std::string infname)
         }
         else
         {
-            std::cout<<"Error: fid_1d::read_spectrum_json, data1[i] is not double or string."<<std::endl;
+            DEEP_OUT<<"Error: fid_1d::read_spectrum_json, data1[i] is not double or string."<<std::endl;
             return false;
         }
     }
@@ -2070,7 +2071,7 @@ bool fid_1d::read_first_spectrum_from_buffer(std::vector<float> &header, std::ve
      */
     if(header.size()<512)
     {
-        std::cout << "Error: buffer size is less than 512, cannot read nmrPipe header." << std::endl;
+        DEEP_OUT << "Error: buffer size is less than 512, cannot read nmrPipe header." << std::endl;
         return false;
     }
     /**
@@ -2107,13 +2108,13 @@ bool fid_1d::read_spectrum_ft(std::string infname)
     fp = fopen(infname.c_str(), "rb");
     if (fp == NULL)
     {
-        std::cout << "Can't open " << infname << " to read." << std::endl;
+        DEEP_OUT << "Can't open " << infname << " to read." << std::endl;
         return false;
     }
     unsigned int temp = fread(nmrpipe_header_data.data(), sizeof(float), 512, fp);
     if (temp != 512)
     {
-        std::cout << "Wrong file format, can't read 2048 bytes of head information from " << infname << std::endl;
+        DEEP_OUT << "Wrong file format, can't read 2048 bytes of head information from " << infname << std::endl;
         return false;
     }
     process_nmrpipe_header();    
@@ -2124,18 +2125,18 @@ bool fid_1d::read_spectrum_ft(std::string infname)
 
     if (temp != ndata_frq)
     {
-        std::cout << "Read nmrPipe 1D error, spectrum size is " << ndata_frq << " but I can only read in " << temp << " data points." << std::endl;
+        DEEP_OUT << "Read nmrPipe 1D error, spectrum size is " << ndata_frq << " but I can only read in " << temp << " data points." << std::endl;
     }
 
     spectrum_imag.resize(ndata_frq);
     temp = fread(spectrum_imag.data(), sizeof(float), ndata_frq, fp);
     if (temp == ndata_frq)
     {
-        if(n_verbose>0) std::cout << "Read nmrPipe 1D imaginary part successully." << std::endl;
+        if(n_verbose>0) DEEP_OUT << "Read nmrPipe 1D imaginary part successully." << std::endl;
     }
     else
     {
-        if(n_verbose>0) std::cout << "Read nmrPipe 1D  imaginary part failed." << std::endl;
+        if(n_verbose>0) DEEP_OUT << "Read nmrPipe 1D  imaginary part failed." << std::endl;
         spectrum_imag.clear();
     }
 
@@ -2149,7 +2150,7 @@ bool fid_1d::process_nmrpipe_header()
 {
     if (nmrpipe_header_data[10 - 1] != 1.0f)
     {
-        std::cout << "Wrong file format, dimension (header[9]) is " << nmrpipe_header_data[0] << std::endl;
+        DEEP_OUT << "Wrong file format, dimension (header[9]) is " << nmrpipe_header_data[0] << std::endl;
         return false;
     }
 
@@ -2225,7 +2226,7 @@ bool fid_1d::write_spectrum(std::string fname)
     }
     else
     {
-        std::cout<<"Error: fid_1d::write_spectrum, unknown file extension "<<file_name_ext<<std::endl;
+        DEEP_OUT<<"Error: fid_1d::write_spectrum, unknown file extension "<<file_name_ext<<std::endl;
         return false;
     }
     return b_write;
@@ -2383,13 +2384,13 @@ bool fid_1d::read_spectrum_txt(std::string infname)
 
     if(spectrum_real.size()!=ndata_frq)
     {
-        std::cout<<"Error: fid_1d::read_spectrum_txt, ndata_frq is not equal to the number of data points. Set ndata_frq=spect.size()"<<std::endl;
+        DEEP_OUT<<"Error: fid_1d::read_spectrum_txt, ndata_frq is not equal to the number of data points. Set ndata_frq=spect.size()"<<std::endl;
         ndata_frq = spectrum_real.size();
     }
 
     if(spectrum_imag.size()!=ndata_frq)
     {
-        std::cout<<"Error: fid_1d::read_spectrum_txt, ndata_frq is not equal to the number of data points. Remove imaginary data."<<std::endl;
+        DEEP_OUT<<"Error: fid_1d::read_spectrum_txt, ndata_frq is not equal to the number of data points. Remove imaginary data."<<std::endl;
         spectrum_imag.clear(); //spe_image.size()==0 is used to indicate that there is no imaginary part
     }
 
@@ -2437,18 +2438,18 @@ bool fid_1d::read_spectrum_sparky(std::string infname)
     fp = fopen(infname.c_str(), "rb");
     if (fp == NULL)
     {
-        std::cout << "Can't open " << infname << " to read." << std::endl;
+        DEEP_OUT << "Can't open " << infname << " to read." << std::endl;
         return false;
     }
 
     fread(buffer, 1, 10, fp);
-    // std::cout<<buffer<<std::endl;
+    // DEEP_OUT<<buffer<<std::endl;
 
     fread(buffer, 1, 1, fp);
     temp = int(buffer[0]);
     if (temp != 1)
     {
-        std::cout << "Error in sparky format file, dimension is not 1" << std::endl;
+        DEEP_OUT << "Error in sparky format file, dimension is not 1" << std::endl;
         return false;
     }
 
@@ -2457,16 +2458,16 @@ bool fid_1d::read_spectrum_sparky(std::string infname)
     temp = int(buffer[0]);
     if (temp != 1)
     {
-        std::cout << "Error in sparky format file, it is not in real data" << std::endl;
+        DEEP_OUT << "Error in sparky format file, it is not in real data" << std::endl;
         return false;
     }
 
     fread(buffer, 1, 1, fp);
-    // std::cout<<"Version is "<< int(buffer[0])<<std::endl;
+    // DEEP_OUT<<"Version is "<< int(buffer[0])<<std::endl;
     fseek(fp, 166, SEEK_CUR);  //at location 180
 
     fread(buffer, 1, 6, fp); // nuleus name, at location 186
-    std::cout << "Direct dimension nuleus " << buffer << std::endl;
+    DEEP_OUT << "Direct dimension nuleus " << buffer << std::endl;
     fseek(fp, 2, SEEK_CUR); //at 188
     ndata_frq = read_int(fp); //at 192
     fseek(fp, 8, SEEK_CUR); //at 200
@@ -2496,10 +2497,10 @@ bool fid_1d::read_spectrum_sparky(std::string infname)
 
     origin = center1 * observed_frequency - spectral_width / 2;
 
-    std::cout << "Spectrum width are " << spectral_width << " Hz" << std::endl;
-    std::cout << "Fields are " << observed_frequency << " mHz" << std::endl;
-    std::cout << "Direct dimension size is " << ndata_frq  << std::endl;
-    std::cout << "Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
+    DEEP_OUT << "Spectrum width are " << spectral_width << " Hz" << std::endl;
+    DEEP_OUT << "Fields are " << observed_frequency << " mHz" << std::endl;
+    DEEP_OUT << "Direct dimension size is " << ndata_frq  << std::endl;
+    DEEP_OUT << "Direct dimension offset is " << begin1 << ", ppm per step is " << step1 << " ppm" << std::endl;
 
     fclose(fp);
 
@@ -2542,7 +2543,7 @@ bool fid_1d::write_spectrum_csv(std::string outfname)
     outfile.open(outfname);
     if (!outfile.is_open())
     {
-        std::cout << "Error: cannot open file " << outfname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << outfname << std::endl;
         return false;
     }
 
@@ -2563,7 +2564,7 @@ bool fid_1d::write_spectrum_txt(std::string outfname)
     outfile.open(outfname);
     if (!outfile.is_open())
     {
-        std::cout << "Error: cannot open file " << outfname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << outfname << std::endl;
         return false;
     }
 
@@ -2641,7 +2642,7 @@ bool fid_1d::est_noise_level()
     int n = variances.size() / 4;
     nth_element(variances.begin(), variances.begin() + n, variances.end());
     noise_level = sqrt(variances[n]);
-    if(n_verbose>0) std::cout << "Noise level is estiamted to be " << noise_level << ", using a geneal purpose method." << std::endl;
+    if(n_verbose>0) DEEP_OUT << "Noise level is estiamted to be " << noise_level << ", using a geneal purpose method." << std::endl;
 
     return true;
 }
@@ -2669,7 +2670,7 @@ bool fid_1d::est_noise_level_mad()
         noise_level = scores[scores.size() / 2] * 1.4826;
         if (noise_level <= 0.0)
             noise_level = 0.1; // artificail spectrum w/o noise
-        std::cout << "First round, noise level is " << noise_level << std::endl;
+        DEEP_OUT << "First round, noise level is " << noise_level << std::endl;
 
         std::vector<int> flag(ndim, 0); // flag
 
@@ -2700,7 +2701,7 @@ bool fid_1d::est_noise_level_mad()
         noise_level = scores[scores.size() / 2] * 1.4826;
         if (noise_level <= 0.0)
             noise_level = 0.1; // artificail spectrum w/o noise
-        std::cout << "Final noise level is estiamted to be " << noise_level << std::endl;
+        DEEP_OUT << "Final noise level is estiamted to be " << noise_level << std::endl;
     }
 
     return true;
@@ -2716,7 +2717,7 @@ bool fid_1d::write_json(std::string fname)
     std::ofstream outfile(fname.c_str());
     if (!outfile.is_open())
     {
-        std::cout << "Error: cannot open file " << fname << std::endl;
+        DEEP_OUT << "Error: cannot open file " << fname << std::endl;
         return false;
     }
 

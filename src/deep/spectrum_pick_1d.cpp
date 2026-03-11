@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "deep_output.h"
 #include "json/json.h"
 #include "commandline.h"
 
@@ -170,7 +171,7 @@ bool spectrum_pick_1d::peak_partition_step2()
         if (stop - begin < 5)
             continue;
 
-        // std::cout<<"Step 1, from "<<begin<<" to "<<stop<<std::endl;
+        // DEEP_OUT<<"Step 1, from "<<begin<<" to "<<stop<<std::endl;
 
         std::vector<int> peak_positions, min_positions;
         std::vector<float> peak_amplitudes;
@@ -215,7 +216,7 @@ bool spectrum_pick_1d::peak_partition_step2()
             s = min_positions[bs[k] - 1];
             final_segment_begin.push_back(b);
             final_segment_stop.push_back(s);
-            // std::cout<<"Cut into "<<b<<" - "<<s<<std::endl;
+            // DEEP_OUT<<"Cut into "<<b<<" - "<<s<<std::endl;
         }
     }
 
@@ -462,9 +463,9 @@ bool spectrum_pick_1d::interpolate_spectrum(const double inter_step)
     ndata_frq = ndata_new;                  
     step1 = inter_step * step1; // unit of step1 is ppm, not points
 
-    std::cout<<"After cubic spline interpolation, ";
-    std::cout<<"Estimated FWHH is "<<get_median_peak_width()<<" pixel. ";
-    std::cout<<"spectrum size is "<<ndata_frq<<" and step1 is "<<step1<<" ppm"<<std::endl;
+    DEEP_OUT<<"After cubic spline interpolation, ";
+    DEEP_OUT<<"Estimated FWHH is "<<get_median_peak_width()<<" pixel. ";
+    DEEP_OUT<<"spectrum size is "<<ndata_frq<<" and step1 is "<<step1<<" ppm"<<std::endl;
 
     return true;
 }
@@ -480,13 +481,13 @@ bool spectrum_pick_1d::adjust_ppp_of_spectrum(const double ppp)
      * First, get fwhh of spectrum
      */
     double fwhh = get_median_peak_width();
-    std::cout<<"Estimated FWHH is "<<fwhh<<" pixel"<<std::endl;
+    DEEP_OUT<<"Estimated FWHH is "<<fwhh<<" pixel"<<std::endl;
 
     /**
      * To adjust ppp, we need to interpolate the spectrum
      */
     double current_interpolation_step = fwhh / ppp;
-    std::cout<<"Interpolation step is "<<current_interpolation_step<<" pixel"<<std::endl;
+    DEEP_OUT<<"Interpolation step is "<<current_interpolation_step<<" pixel"<<std::endl;
 
     interpolate_spectrum(current_interpolation_step);    
 
@@ -494,7 +495,7 @@ bool spectrum_pick_1d::adjust_ppp_of_spectrum(const double ppp)
      * Keep track of total interpolation step
      */
     interpolation_step = interpolation_step * current_interpolation_step;
-    std::cout<<"Total interpolation step is "<<interpolation_step<<" pixel"<<std::endl;
+    DEEP_OUT<<"Total interpolation step is "<<interpolation_step<<" pixel"<<std::endl;
 
     return true;
 }
