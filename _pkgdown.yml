@@ -1,0 +1,24 @@
+destination: ../../../R/smith-group.github.io/deeppicker
+url: https://smith-group.github.io/deeppicker/
+template:
+  bootstrap: 5
+figures:
+  fig.height: 7
+authors:
+  Colin Smith:
+    href: http://smithlab.wesleyan.edu
+  Da-Wei Li:
+    href: https://research.cbc.osu.edu/bruschweiler.1/
+  Rafael Brüschweiler:
+    href: https://research.cbc.osu.edu/bruschweiler.1/
+reference:
+  - title: Peak Picking
+    desc: Run DEEP Picker on one- and two-dimensional spectra.
+    contents:
+      - deep_picker
+      - deep_picker_1d
+  - title: Spectrum Readers
+    desc: Read supported spectrum formats into R objects with ppm values in names.
+    contents:
+      - read_spectrum_1d
+      - read_spectrum_2d

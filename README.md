@@ -8,6 +8,12 @@ returns picked peaks and confidence scores in R-friendly objects.
 The underlying DEEP Picker code and algorithms were created by Da-Wei Li and
 Rafael Bruschweiler. The R package interface was created by Colin Smith.
 
+## Documentation
+
+Package documentation is available at:
+
+<https://smith-group.github.io/deeppicker/>
+
 ## Upstream project
 
 The original DEEP Picker source repository is:

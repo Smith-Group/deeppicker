@@ -16,6 +16,8 @@ Description: Provides an R interface to the DEEP Picker neural-network
     including NMRPipe, Sparky, TopSpin ASCII, JSON, CSV, and ldw files,
     so spectra can be imported and processed directly.
 License: GPL-3
+URL: https://github.com/smith-group/deeppicker,
+    https://smith-group.github.io/deeppicker/
 Encoding: UTF-8
 Depends: R (>= 3.6.0)
 Imports:
