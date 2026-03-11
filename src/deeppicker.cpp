@@ -278,7 +278,8 @@ extern "C" SEXP C_deeppicker_pick_matrix(SEXP spectrumSEXP,
                                          SEXP t1NoiseSEXP,
                                          SEXP negativeSEXP,
                                          SEXP debugFlagSEXP,
-                                         SEXP outFormatSEXP)
+                                         SEXP outFormatSEXP,
+                                         SEXP verboseSEXP)
 {
     NumericMatrix spectrum(spectrumSEXP);
     NumericVector ppm(ppmSEXP);
@@ -292,7 +293,8 @@ extern "C" SEXP C_deeppicker_pick_matrix(SEXP spectrumSEXP,
     const bool negative = as<bool>(negativeSEXP);
     const int debug_flag = as<int>(debugFlagSEXP);
     const std::string out_format = as<std::string>(outFormatSEXP);
-    DeepOutputScope output_scope(true);
+    const bool verbose = as<bool>(verboseSEXP);
+    DeepOutputScope output_scope(verbose);
 
     DeepPickerAdapter picker;
     if (!picker.load_from_matrix(spectrum, ppm)) {
@@ -326,7 +328,8 @@ extern "C" SEXP C_deeppicker_pick_file(SEXP pathSEXP,
                                        SEXP modelSEXP,
                                        SEXP autoPppSEXP,
                                        SEXP t1NoiseSEXP,
-                                       SEXP negativeSEXP)
+                                       SEXP negativeSEXP,
+                                       SEXP verboseSEXP)
 {
     const std::string path = as<std::string>(pathSEXP);
     const std::string out_path = as<std::string>(outPathSEXP);
@@ -336,8 +339,8 @@ extern "C" SEXP C_deeppicker_pick_file(SEXP pathSEXP,
     const bool auto_ppp = as<bool>(autoPppSEXP);
     const bool t1_noise = as<bool>(t1NoiseSEXP);
     const bool negative = as<bool>(negativeSEXP);
-
-    DeepOutputScope output_scope(true);
+    const bool verbose = as<bool>(verboseSEXP);
+    DeepOutputScope output_scope(verbose);
 
     spectrum_pick picker;
 
@@ -367,7 +370,8 @@ extern "C" SEXP C_deeppicker_pick_1d(SEXP spectrumSEXP,
                                      SEXP modelSEXP,
                                      SEXP autoPppSEXP,
                                      SEXP interpStepSEXP,
-                                     SEXP negativeSEXP)
+                                     SEXP negativeSEXP,
+                                     SEXP verboseSEXP)
 {
     NumericVector spectrum(spectrumSEXP);
     NumericVector ppm(ppmSEXP);
@@ -379,8 +383,8 @@ extern "C" SEXP C_deeppicker_pick_1d(SEXP spectrumSEXP,
     const bool auto_ppp = as<bool>(autoPppSEXP);
     const double interp_step = as<double>(interpStepSEXP);
     const bool negative = as<bool>(negativeSEXP);
-
-    DeepOutputScope output_scope(true);
+    const bool verbose = as<bool>(verboseSEXP);
+    DeepOutputScope output_scope(verbose);
 
     DeepPicker1dAdapter picker;
     picker.init(scale, scale2, noise);
@@ -415,7 +419,8 @@ extern "C" SEXP C_deeppicker_pick_1d_file(SEXP pathSEXP,
                                           SEXP modelSEXP,
                                           SEXP autoPppSEXP,
                                           SEXP interpStepSEXP,
-                                          SEXP negativeSEXP)
+                                          SEXP negativeSEXP,
+                                          SEXP verboseSEXP)
 {
     const std::string path = as<std::string>(pathSEXP);
     const std::string out_path = as<std::string>(outPathSEXP);
@@ -426,8 +431,8 @@ extern "C" SEXP C_deeppicker_pick_1d_file(SEXP pathSEXP,
     const bool auto_ppp = as<bool>(autoPppSEXP);
     const double interp_step = as<double>(interpStepSEXP);
     const bool negative = as<bool>(negativeSEXP);
-
-    DeepOutputScope output_scope(true);
+    const bool verbose = as<bool>(verboseSEXP);
+    DeepOutputScope output_scope(verbose);
 
     spectrum_pick_1d picker;
     picker.init(scale, scale2, noise);
@@ -450,10 +455,11 @@ extern "C" SEXP C_deeppicker_pick_1d_file(SEXP pathSEXP,
     return R_NilValue;
 }
 
-extern "C" SEXP C_deeppicker_read_1d(SEXP pathSEXP)
+extern "C" SEXP C_deeppicker_read_1d(SEXP pathSEXP, SEXP verboseSEXP)
 {
     const std::string path = as<std::string>(pathSEXP);
-    DeepOutputScope output_scope(true);
+    const bool verbose = as<bool>(verboseSEXP);
+    DeepOutputScope output_scope(verbose);
     DeepReader1dAdapter reader;
 
     if (!reader.load_file(path)) {
@@ -463,10 +469,11 @@ extern "C" SEXP C_deeppicker_read_1d(SEXP pathSEXP)
     return reader.spectrum_vector();
 }
 
-extern "C" SEXP C_deeppicker_read_2d(SEXP pathSEXP)
+extern "C" SEXP C_deeppicker_read_2d(SEXP pathSEXP, SEXP verboseSEXP)
 {
     const std::string path = as<std::string>(pathSEXP);
-    DeepOutputScope output_scope(true);
+    const bool verbose = as<bool>(verboseSEXP);
+    DeepOutputScope output_scope(verbose);
     DeepReader2dAdapter reader;
 
     if (!reader.load_file(path)) {

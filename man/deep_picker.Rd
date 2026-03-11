@@ -15,6 +15,7 @@ deep_picker(
   t1_noise = FALSE,
   negative = FALSE,
   debug_flag = 0L,
+  verbose = TRUE,
   as_data_frame = TRUE
 )
 }
@@ -51,6 +52,8 @@ spline interpolation.}
 positive peaks.}
 
 \item{debug_flag}{Integer debug flag forwarded to the DEEP Picker core.}
+
+\item{verbose}{Logical; whether to print DEEP Picker progress messages.}
 
 \item{as_data_frame}{Logical; if `TRUE`, return a data frame of peaks. If
 `FALSE`, return a list with the peak table, estimated median widths, and

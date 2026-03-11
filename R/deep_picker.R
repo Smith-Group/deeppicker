@@ -75,6 +75,7 @@
 #' @param negative Logical; whether to pick negative peaks in addition to
 #'   positive peaks.
 #' @param debug_flag Integer debug flag forwarded to the DEEP Picker core.
+#' @param verbose Logical; whether to print DEEP Picker progress messages.
 #' @param as_data_frame Logical; if `TRUE`, return a data frame of peaks. If
 #'   `FALSE`, return a list with the peak table, estimated median widths, and
 #'   noise level.
@@ -152,6 +153,7 @@ deep_picker <- function(spectrum,
                         t1_noise = FALSE,
                         negative = FALSE,
                         debug_flag = 0L,
+                        verbose = TRUE,
                         as_data_frame = TRUE) {
   if (!is.matrix(spectrum) || !is.numeric(spectrum)) {
     stop("`spectrum` must be a numeric matrix.")
@@ -182,6 +184,7 @@ deep_picker <- function(spectrum,
     as.logical(negative),
     as.integer(debug_flag),
     if (isTRUE(as_data_frame)) "data.frame" else "list",
+    as.logical(verbose),
     PACKAGE = "deeppicker"
   )
 }
@@ -196,6 +199,7 @@ deep_picker <- function(spectrum,
 #' @param out Output path for the written peak table.
 #' @param scale,scale2,model,auto_ppp,t1_noise,negative Passed through to the
 #'   DEEP Picker implementation.
+#' @param verbose Logical; whether to print DEEP Picker progress messages.
 #'
 #' @return Invisibly returns `NULL`.
 #'
@@ -208,7 +212,8 @@ deep_picker_file <- function(path,
                              model = 1L,
                              auto_ppp = TRUE,
                              t1_noise = FALSE,
-                             negative = FALSE) {
+                             negative = FALSE,
+                             verbose = TRUE) {
   invisible(.Call(
     "C_deeppicker_pick_file",
     normalizePath(path, mustWork = TRUE),
@@ -219,6 +224,7 @@ deep_picker_file <- function(path,
     as.logical(auto_ppp),
     as.logical(t1_noise),
     as.logical(negative),
+    as.logical(verbose),
     PACKAGE = "deeppicker"
   ))
 }

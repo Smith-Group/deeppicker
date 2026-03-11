@@ -81,6 +81,7 @@
 #'   Values other than `1` suppress automatic PPP adjustment.
 #' @param negative Logical; whether to pick negative peaks in addition to
 #'   positive peaks.
+#' @param verbose Logical; whether to print DEEP Picker progress messages.
 #'
 #' @return A data frame with one row per picked peak and the following columns:
 #'   \describe{
@@ -138,7 +139,8 @@ deep_picker_1d <- function(spectrum,
                            model = 2L,
                            auto_ppp = TRUE,
                            interp_step = 1,
-                           negative = FALSE) {
+                           negative = FALSE,
+                           verbose = TRUE) {
   if (!is.numeric(spectrum) || is.matrix(spectrum)) {
     stop("`spectrum` must be a numeric vector.")
   }
@@ -168,6 +170,7 @@ deep_picker_1d <- function(spectrum,
     as.logical(auto_ppp),
     as.double(interp_step),
     as.logical(negative),
+    as.logical(verbose),
     PACKAGE = "deeppicker"
   )
 }
@@ -187,7 +190,8 @@ deep_picker_1d_file <- function(path,
                                 model = 2L,
                                 auto_ppp = TRUE,
                                 interp_step = 1,
-                                negative = FALSE) {
+                                negative = FALSE,
+                                verbose = TRUE) {
   if (!is.null(noise) && (!is.numeric(noise) || length(noise) != 1L)) {
     stop("`noise` must be NULL or a numeric scalar.")
   }
@@ -203,6 +207,7 @@ deep_picker_1d_file <- function(path,
     as.logical(auto_ppp),
     as.double(interp_step),
     as.logical(negative),
+    as.logical(verbose),
     PACKAGE = "deeppicker"
   ))
 }

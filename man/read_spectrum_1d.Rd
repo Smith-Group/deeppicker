@@ -4,10 +4,12 @@
 \alias{read_spectrum_1d}
 \title{Read a 1D Spectrum with DEEP Picker Parsers}
 \usage{
-read_spectrum_1d(path)
+read_spectrum_1d(path, verbose = TRUE)
 }
 \arguments{
 \item{path}{Path to a 1D spectrum file.}
+
+\item{verbose}{Logical; whether to print parser progress messages.}
 }
 \value{
 A named numeric vector containing the real spectrum. The names are

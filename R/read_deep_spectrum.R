@@ -9,6 +9,7 @@
 #' and the DEEP Picker `.ldw` format.
 #'
 #' @param path Path to a 1D spectrum file.
+#' @param verbose Logical; whether to print parser progress messages.
 #'
 #' @return A named numeric vector containing the real spectrum. The names are
 #'   numeric ppm values stored as character strings.
@@ -18,10 +19,11 @@
 #' x <- read_spectrum_1d(path)
 #' str(x)
 #' @export
-read_spectrum_1d <- function(path) {
+read_spectrum_1d <- function(path, verbose = TRUE) {
   .Call(
     "C_deeppicker_read_1d",
     normalizePath(path, mustWork = TRUE),
+    as.logical(verbose),
     PACKAGE = "deeppicker"
   )
 }
@@ -37,6 +39,7 @@ read_spectrum_1d <- function(path) {
 #' and the DEEP Picker `.ldw` format.
 #'
 #' @param path Path to a 2D spectrum file.
+#' @param verbose Logical; whether to print parser progress messages.
 #'
 #' @return A numeric matrix with row names and column names set to ppm values.
 #'
@@ -45,10 +48,11 @@ read_spectrum_1d <- function(path) {
 #' x <- read_spectrum_2d(path)
 #' str(x)
 #' @export
-read_spectrum_2d <- function(path) {
+read_spectrum_2d <- function(path, verbose = TRUE) {
   .Call(
     "C_deeppicker_read_2d",
     normalizePath(path, mustWork = TRUE),
+    as.logical(verbose),
     PACKAGE = "deeppicker"
   )
 }

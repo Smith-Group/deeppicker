@@ -13,7 +13,8 @@ deep_picker_1d(
   model = 2L,
   auto_ppp = TRUE,
   interp_step = 1,
-  negative = FALSE
+  negative = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ Values other than `1` suppress automatic PPP adjustment.}
 
 \item{negative}{Logical; whether to pick negative peaks in addition to
 positive peaks.}
+
+\item{verbose}{Logical; whether to print DEEP Picker progress messages.}
 }
 \value{
 A data frame with one row per picked peak and the following columns:
