@@ -45,10 +45,13 @@ test_that("deep_picker_1d file-based wrapper reproduces the reference peak table
     "index", "x_axis", "x_ppm", "xw", "height", "confidence"
   )
 
+  out_tab <- out_tab[order(out_tab$x_ppm), ]
+  ref_tab <- ref_tab[order(ref_tab$x_ppm), ]
+
   expect_equal(nrow(out_tab), nrow(ref_tab))
   expect_equal(out_tab$x_axis, ref_tab$x_axis, tolerance = 1e-3)
   expect_equal(out_tab$x_ppm, ref_tab$x_ppm, tolerance = 1e-4)
-  #expect_equal(out_tab$xw, ref_tab$xw, tolerance = 1e-3)
+  expect_equal(out_tab$xw, ref_tab$xw, tolerance = 1e-3)
   expect_equal(out_tab$height, ref_tab$height, tolerance = 50)
   expect_equal(out_tab$confidence, ref_tab$confidence, tolerance = 5e-2)
 })
