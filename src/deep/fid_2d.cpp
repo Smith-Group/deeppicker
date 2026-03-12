@@ -34,6 +34,15 @@
 using namespace emscripten;
 #endif
 
+namespace {
+
+bool fread_exact(FILE *fp, void *buffer, size_t size, size_t count)
+{
+    return std::fread(buffer, size, count, fp) == count;
+}
+
+} // namespace
+
 namespace fid_2d_math {
     bool movemean(float *data, float * new_data, int ndata, int nwindow )
     {
@@ -1208,10 +1217,15 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
             /**
              * At this time, we suppose the data is complex for time domain data
             */
-            fread(fid_data_real_real.data(), sizeof(float), ndata, fp);
-            fread(fid_data_real_imag.data(), sizeof(float), ndata, fp);
-            fread(fid_data_imag_real.data(), sizeof(float), ndata, fp);
-            fread(fid_data_imag_imag.data(), sizeof(float), ndata, fp);
+            if (!fread_exact(fp, fid_data_real_real.data(), sizeof(float), ndata) ||
+                !fread_exact(fp, fid_data_real_imag.data(), sizeof(float), ndata) ||
+                !fread_exact(fp, fid_data_imag_real.data(), sizeof(float), ndata) ||
+                !fread_exact(fp, fid_data_imag_imag.data(), sizeof(float), ndata))
+            {
+                DEEP_OUT << "Error reading NMRPipe time-domain data from " << infname << std::endl;
+                fclose(fp);
+                return false;
+            }
         }
     }
     /**
@@ -1230,19 +1244,39 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
 
         for (int i = 0; i < n_outer_dim; i++)
         {
-            fread(spectrum_real_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
+            if (!fread_exact(fp, spectrum_real_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+            {
+                DEEP_OUT << "Error reading NMRPipe real spectrum data from " << infname << std::endl;
+                fclose(fp);
+                return false;
+            }
             if(b_imaginary==true)
             {
-                fread(spectrum_real_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
+                if (!fread_exact(fp, spectrum_real_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+                {
+                    DEEP_OUT << "Error reading NMRPipe imaginary spectrum data from " << infname << std::endl;
+                    fclose(fp);
+                    return false;
+                }
             }
             if(b_imaginary_indirect==true)
             {
-                fread(spectrum_imag_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
+                if (!fread_exact(fp, spectrum_imag_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+                {
+                    DEEP_OUT << "Error reading NMRPipe indirect imaginary spectrum data from " << infname << std::endl;
+                    fclose(fp);
+                    return false;
+                }
                 
             }
             if(b_imaginary==true && b_imaginary_indirect==true)
             {
-                fread(spectrum_imag_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
+                if (!fread_exact(fp, spectrum_imag_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+                {
+                    DEEP_OUT << "Error reading NMRPipe complex spectrum data from " << infname << std::endl;
+                    fclose(fp);
+                    return false;
+                }
             }
         }
     }
@@ -1261,16 +1295,31 @@ bool fid_2d::read_nmrpipe_file(const std::string &fname)
 
         for (int i = 0; i < n_outer_dim; i++)
         {
-            fread(intermediate_data_real_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
+            if (!fread_exact(fp, intermediate_data_real_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+            {
+                DEEP_OUT << "Error reading NMRPipe intermediate real data from " << infname << std::endl;
+                fclose(fp);
+                return false;
+            }
             if(b_imaginary==true)
             {
-                fread(intermediate_data_real_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
-                fread(intermediate_data_imag_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
-                fread(intermediate_data_imag_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);
+                if (!fread_exact(fp, intermediate_data_real_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim) ||
+                    !fread_exact(fp, intermediate_data_imag_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim) ||
+                    !fread_exact(fp, intermediate_data_imag_imag.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+                {
+                    DEEP_OUT << "Error reading NMRPipe intermediate complex data from " << infname << std::endl;
+                    fclose(fp);
+                    return false;
+                }
             }
             else
             {
-                fread(intermediate_data_imag_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim, fp);    
+                if (!fread_exact(fp, intermediate_data_imag_real.data() + i * n_inner_dim, sizeof(float), n_inner_dim))
+                {
+                    DEEP_OUT << "Error reading NMRPipe intermediate indirect-imaginary data from " << infname << std::endl;
+                    fclose(fp);
+                    return false;
+                }
             }
         }
     }
@@ -3736,10 +3785,20 @@ bool fid_2d::read_sparky(std::string infname)
         return false;
     }
 
-    fread(buffer, 1, 10, fp);
+    if (!fread_exact(fp, buffer, 1, 10))
+    {
+        DEEP_OUT << "Error reading Sparky header from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     // DEEP_OUT<<buffer<<std::endl;
 
-    fread(buffer, 1, 1, fp);
+    if (!fread_exact(fp, buffer, 1, 1))
+    {
+        DEEP_OUT << "Error reading Sparky dimension from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     temp = int(buffer[0]);
     if (temp != 2)
     {
@@ -3747,7 +3806,12 @@ bool fid_2d::read_sparky(std::string infname)
         return false;
     }
 
-    fread(buffer, 1, 1, fp);
+    if (!fread_exact(fp, buffer, 1, 1))
+    {
+        DEEP_OUT << "Error reading Sparky data type from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     fseek(fp, 1, SEEK_CUR);
     temp = int(buffer[0]);
     if (temp != 1)
@@ -3756,7 +3820,12 @@ bool fid_2d::read_sparky(std::string infname)
         return false;
     }
 
-    fread(buffer, 1, 1, fp);
+    if (!fread_exact(fp, buffer, 1, 1))
+    {
+        DEEP_OUT << "Error reading Sparky version from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     // DEEP_OUT<<"Version is "<< int(buffer[0])<<std::endl;
     fseek(fp, 166, SEEK_CUR);
 
@@ -3765,7 +3834,12 @@ bool fid_2d::read_sparky(std::string infname)
     float center1, center2;
     int tile1, tile2;
 
-    fread(buffer, 1, 6, fp); // nuleus name
+    if (!fread_exact(fp, buffer, 1, 6))
+    {
+        DEEP_OUT << "Error reading Sparky indirect nucleus from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    } // nuleus name
     DEEP_OUT << "Indirect dimension nuleus " << buffer << std::endl;
     fseek(fp, 2, SEEK_CUR);
     ndata_frq_indirect = read_int(fp);
@@ -3776,7 +3850,12 @@ bool fid_2d::read_sparky(std::string infname)
     center2 = read_float(fp);
     fseek(fp, 96, SEEK_CUR);
 
-    fread(buffer, 1, 6, fp); // nuleus name
+    if (!fread_exact(fp, buffer, 1, 6))
+    {
+        DEEP_OUT << "Error reading Sparky direct nucleus from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    } // nuleus name
     DEEP_OUT << "Direct dimension nuleus " << buffer << std::endl;
     fseek(fp, 2, SEEK_CUR);
     ndata_frq = read_int(fp);

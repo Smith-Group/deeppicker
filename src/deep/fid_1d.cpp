@@ -25,6 +25,15 @@ using namespace emscripten;
 #include "json/json.h"
 #include "fid_1d.h"
 
+namespace {
+
+bool fread_exact(FILE *fp, void *buffer, size_t size, size_t count)
+{
+    return std::fread(buffer, size, count, fp) == count;
+}
+
+} // namespace
+
 /**
  * These are shared varibles between db_match_1d and pattern_match_1d and spectrum_pick_1d
 */
@@ -881,7 +890,11 @@ bool fid_base::read_jcmap_line(std::istream &infile, std::string line, std::stri
 float fid_base::read_float(FILE *fp)
 {
     char buff[4];
-    fread(buff, 4, 1, fp); // dimension
+    if (!fread_exact(fp, buff, 4, 1))
+    {
+        DEEP_ERR << "Error reading float from binary spectrum file." << std::endl;
+        return 0.0f;
+    }
     std::swap(buff[0], buff[3]);
     std::swap(buff[1], buff[2]);
     return *((float *)buff);
@@ -889,7 +902,11 @@ float fid_base::read_float(FILE *fp)
 
 bool fid_base::read_float(FILE *fp, int n, float *pf)
 {
-    fread(pf, 4, n, fp);
+    if (!fread_exact(fp, pf, 4, static_cast<size_t>(n)))
+    {
+        DEEP_ERR << "Error reading float block from binary spectrum file." << std::endl;
+        return false;
+    }
     char *buff = (char *)pf;
     for (int i = 0; i < n; i++)
     {
@@ -902,7 +919,11 @@ bool fid_base::read_float(FILE *fp, int n, float *pf)
 int fid_base::read_int(FILE *fp)
 {
     char buff[4];
-    fread(buff, 4, 1, fp); // dimension
+    if (!fread_exact(fp, buff, 4, 1))
+    {
+        DEEP_ERR << "Error reading integer from binary spectrum file." << std::endl;
+        return 0;
+    }
     std::swap(buff[0], buff[3]);
     std::swap(buff[1], buff[2]);
     return *((int *)buff);
@@ -2442,10 +2463,20 @@ bool fid_1d::read_spectrum_sparky(std::string infname)
         return false;
     }
 
-    fread(buffer, 1, 10, fp);
+    if (!fread_exact(fp, buffer, 1, 10))
+    {
+        DEEP_OUT << "Error reading Sparky header from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     // DEEP_OUT<<buffer<<std::endl;
 
-    fread(buffer, 1, 1, fp);
+    if (!fread_exact(fp, buffer, 1, 1))
+    {
+        DEEP_OUT << "Error reading Sparky dimension from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     temp = int(buffer[0]);
     if (temp != 1)
     {
@@ -2453,7 +2484,12 @@ bool fid_1d::read_spectrum_sparky(std::string infname)
         return false;
     }
 
-    fread(buffer, 1, 1, fp);
+    if (!fread_exact(fp, buffer, 1, 1))
+    {
+        DEEP_OUT << "Error reading Sparky data type from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     fseek(fp, 1, SEEK_CUR);
     temp = int(buffer[0]);
     if (temp != 1)
@@ -2462,11 +2498,21 @@ bool fid_1d::read_spectrum_sparky(std::string infname)
         return false;
     }
 
-    fread(buffer, 1, 1, fp);
+    if (!fread_exact(fp, buffer, 1, 1))
+    {
+        DEEP_OUT << "Error reading Sparky version from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    }
     // DEEP_OUT<<"Version is "<< int(buffer[0])<<std::endl;
     fseek(fp, 166, SEEK_CUR);  //at location 180
 
-    fread(buffer, 1, 6, fp); // nuleus name, at location 186
+    if (!fread_exact(fp, buffer, 1, 6))
+    {
+        DEEP_OUT << "Error reading Sparky nucleus from " << infname << std::endl;
+        fclose(fp);
+        return false;
+    } // nuleus name, at location 186
     DEEP_OUT << "Direct dimension nuleus " << buffer << std::endl;
     fseek(fp, 2, SEEK_CUR); //at 188
     ndata_frq = read_int(fp); //at 192

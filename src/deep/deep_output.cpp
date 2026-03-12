@@ -57,7 +57,8 @@ private:
 
 void default_c_error_writer(const char *message)
 {
-    ::write(2, message, std::strlen(message));
+    const ssize_t written = ::write(2, message, std::strlen(message));
+    (void)written;
 }
 
 bool g_verbose = true;
