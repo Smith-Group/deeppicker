@@ -2187,7 +2187,7 @@ static void getValidReaderKeys(std::set<JSONCPP_STRING>* valid_keys) {
   valid_keys->insert("allowSpecialFloats");
 }
 bool CharReaderBuilder::validate(Json::Value* invalid) const {
-  Json::Value my_invalid;
+  Json::Value my_invalid(objectValue);
   if (!invalid)
     invalid = &my_invalid; // so we do not need to test for NULL
   Json::Value& inv = *invalid;
@@ -5384,7 +5384,7 @@ static void getValidWriterKeys(std::set<JSONCPP_STRING>* valid_keys) {
   valid_keys->insert("precisionType");
 }
 bool StreamWriterBuilder::validate(Json::Value* invalid) const {
-  Json::Value my_invalid;
+  Json::Value my_invalid(objectValue);
   if (!invalid)
     invalid = &my_invalid; // so we do not need to test for NULL
   Json::Value& inv = *invalid;
