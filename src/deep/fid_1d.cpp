@@ -1564,7 +1564,10 @@ bool fid_1d::create_nmrpipe_dictionary(bool b_frq, std::map<std::string, std::st
     /**
      * Copied from nmrglue. no idea what they mean
      */
-    if (nmrpipe_dict_float["FDF1QUADFLAG"] == nmrpipe_dict_float["FDF2QUADFLAG"] == nmrpipe_dict_float["FDF3QUADFLAG"] && nmrpipe_dict_float["FDF1QUADFLAG"] == nmrpipe_dict_float["FDF4QUADFLAG"] == 1.0f)
+    if (nmrpipe_dict_float["FDF1QUADFLAG"] == 1.0f &&
+        nmrpipe_dict_float["FDF2QUADFLAG"] == 1.0f &&
+        nmrpipe_dict_float["FDF3QUADFLAG"] == 1.0f &&
+        nmrpipe_dict_float["FDF4QUADFLAG"] == 1.0f)
     {
         nmrpipe_dict_float["FDQUADFLAG"] = 1.0f;
     }
@@ -1770,7 +1773,8 @@ bool fid_1d::write_spectrum_json(std::string outfname)
         return false;
     }
 
-    Json::Value root, data;
+    Json::Value root(Json::objectValue);
+    Json::Value data(Json::arrayValue);
 
     for (int j = 0; j < ndata_frq; j++)
     {
@@ -2015,16 +2019,15 @@ bool fid_1d::read_spectrum_csv(std::string fname)
 bool fid_1d::read_spectrum_json(std::string infname)
 {
 
-    Json::Value root;
+    Json::Value root(Json::arrayValue);
     std::ifstream fin(infname);
     if (!fin)
         return false;
 
     fin >> root;
 
-    Json::Value data1, data2;
-    data1 = root[0]; // ppm
-    data2 = root[1]; // amplitude
+    const Json::Value &data1 = root[0]; // ppm
+    const Json::Value &data2 = root[1]; // amplitude
 
     std::vector<float> ppm;
 
@@ -2767,7 +2770,7 @@ bool fid_1d::write_json(std::string fname)
         return false;
     }
 
-    Json::Value root;
+    Json::Value root(Json::objectValue);
     root["ndata"] = ndata;
     root["ndata_frq"] = ndata_frq;
     root["ndata_original"] = ndata_original;
@@ -2791,7 +2794,7 @@ bool fid_1d::write_json(std::string fname)
 
 std::string fid_1d::write_json_as_string()
 {
-    Json::Value root;
+    Json::Value root(Json::objectValue);
     root["ndata"] = ndata;
     root["ndata_frq"] = ndata_frq;
     root["ndata_original"] = ndata_original;
