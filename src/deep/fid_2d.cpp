@@ -1683,7 +1683,7 @@ bool fid_2d::write_json(std::string fname)
         return false;
     }
 
-    Json::Value root(Json::objectValue);
+    Json::Value root;
     root["ndata"] = ndata;
     root["ndata_original"] = ndata_original;
     root["ndata_power_of_2"] = ndata_power_of_2;
@@ -1715,7 +1715,7 @@ bool fid_2d::write_json(std::string fname)
  */
 std::string fid_2d::write_json_as_string()
 {
-    Json::Value root(Json::objectValue);
+    Json::Value root;
     root["ndata"] = ndata;
     root["ndata_original"] = ndata_original;
     root["ndata_power_of_2"] = ndata_power_of_2;
@@ -1750,7 +1750,7 @@ bool fid_2d::write_pseudo3d_json(std::string fname)
         return false;
     }
 
-    Json::Value root(Json::objectValue);
+    Json::Value root;
     root["spectra"]=nspectra;
 
     outfile << root << std::endl;

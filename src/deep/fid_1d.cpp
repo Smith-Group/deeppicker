@@ -1773,8 +1773,7 @@ bool fid_1d::write_spectrum_json(std::string outfname)
         return false;
     }
 
-    Json::Value root(Json::objectValue);
-    Json::Value data(Json::arrayValue);
+    Json::Value root, data;
 
     for (int j = 0; j < ndata_frq; j++)
     {
@@ -2019,15 +2018,16 @@ bool fid_1d::read_spectrum_csv(std::string fname)
 bool fid_1d::read_spectrum_json(std::string infname)
 {
 
-    Json::Value root(Json::arrayValue);
+    Json::Value root;
     std::ifstream fin(infname);
     if (!fin)
         return false;
 
     fin >> root;
 
-    const Json::Value &data1 = root[0]; // ppm
-    const Json::Value &data2 = root[1]; // amplitude
+    Json::Value data1, data2;
+    data1 = root[0]; // ppm
+    data2 = root[1]; // amplitude
 
     std::vector<float> ppm;
 
@@ -2770,7 +2770,7 @@ bool fid_1d::write_json(std::string fname)
         return false;
     }
 
-    Json::Value root(Json::objectValue);
+    Json::Value root;
     root["ndata"] = ndata;
     root["ndata_frq"] = ndata_frq;
     root["ndata_original"] = ndata_original;
@@ -2794,7 +2794,7 @@ bool fid_1d::write_json(std::string fname)
 
 std::string fid_1d::write_json_as_string()
 {
-    Json::Value root(Json::objectValue);
+    Json::Value root;
     root["ndata"] = ndata;
     root["ndata_frq"] = ndata_frq;
     root["ndata_original"] = ndata_original;
