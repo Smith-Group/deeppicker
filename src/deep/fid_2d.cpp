@@ -1683,7 +1683,7 @@ bool fid_2d::write_json(std::string fname)
         return false;
     }
 
-    Json::Value root;
+    Json::Value root(Json::objectValue);
     root["ndata"] = ndata;
     root["ndata_original"] = ndata_original;
     root["ndata_power_of_2"] = ndata_power_of_2;
@@ -1715,7 +1715,7 @@ bool fid_2d::write_json(std::string fname)
  */
 std::string fid_2d::write_json_as_string()
 {
-    Json::Value root;
+    Json::Value root(Json::objectValue);
     root["ndata"] = ndata;
     root["ndata_original"] = ndata_original;
     root["ndata_power_of_2"] = ndata_power_of_2;
@@ -1750,7 +1750,7 @@ bool fid_2d::write_pseudo3d_json(std::string fname)
         return false;
     }
 
-    Json::Value root;
+    Json::Value root(Json::objectValue);
     root["spectra"]=nspectra;
 
     outfile << root << std::endl;
@@ -2484,7 +2484,10 @@ bool fid_2d::create_nmrpipe_dictionary(std::map<std::string, std::string> &nmrpi
     /**
      * Copied from nmrglue. no idea what they mean
      */
-    if (nmrpipe_dict_float["FDF1QUADFLAG"] == nmrpipe_dict_float["FDF2QUADFLAG"] == nmrpipe_dict_float["FDF3QUADFLAG"] && nmrpipe_dict_float["FDF4QUADFLAG"] == 1.0f)
+    if (nmrpipe_dict_float["FDF1QUADFLAG"] == 1.0f &&
+        nmrpipe_dict_float["FDF2QUADFLAG"] == 1.0f &&
+        nmrpipe_dict_float["FDF3QUADFLAG"] == 1.0f &&
+        nmrpipe_dict_float["FDF4QUADFLAG"] == 1.0f)
     {
         nmrpipe_dict_float["FDQUADFLAG"] = 1.0f;
     }
