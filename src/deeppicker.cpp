@@ -108,10 +108,12 @@ public:
 static void configure_picker(spectrum_pick &picker,
                              double scale,
                              double scale2,
+                             double scale_negative,
+                             double scale2_negative,
                              int model)
 {
     picker.set_scale(scale, scale2);
-    picker.set_scale_negative(scale, scale2);
+    picker.set_scale_negative(scale_negative, scale2_negative);
     picker.set_model_selection(model);
 }
 
@@ -273,6 +275,8 @@ extern "C" SEXP C_deeppicker_pick_matrix(SEXP spectrumSEXP,
                                          SEXP noiseSEXP,
                                          SEXP scaleSEXP,
                                          SEXP scale2SEXP,
+                                         SEXP scaleNegativeSEXP,
+                                         SEXP scale2NegativeSEXP,
                                          SEXP modelSEXP,
                                          SEXP autoPppSEXP,
                                          SEXP t1NoiseSEXP,
@@ -287,6 +291,8 @@ extern "C" SEXP C_deeppicker_pick_matrix(SEXP spectrumSEXP,
     const double noise = estimate_noise ? 0.0 : as<double>(noiseSEXP);
     const double scale = as<double>(scaleSEXP);
     const double scale2 = as<double>(scale2SEXP);
+    const double scale_negative = as<double>(scaleNegativeSEXP);
+    const double scale2_negative = as<double>(scale2NegativeSEXP);
     const int model = as<int>(modelSEXP);
     const bool auto_ppp = as<bool>(autoPppSEXP);
     const bool t1_noise = as<bool>(t1NoiseSEXP);
@@ -307,7 +313,7 @@ extern "C" SEXP C_deeppicker_pick_matrix(SEXP spectrumSEXP,
         picker.set_constant_noise(noise);
     }
 
-    configure_picker(picker, scale, scale2, model);
+    configure_picker(picker, scale, scale2, scale_negative, scale2_negative, model);
     maybe_adjust_ppp(picker, model, auto_ppp);
 
     if (!picker.ann_peak_picking(debug_flag, t1_noise ? 1 : 0, negative)) {
@@ -325,6 +331,8 @@ extern "C" SEXP C_deeppicker_pick_file(SEXP pathSEXP,
                                        SEXP outPathSEXP,
                                        SEXP scaleSEXP,
                                        SEXP scale2SEXP,
+                                       SEXP scaleNegativeSEXP,
+                                       SEXP scale2NegativeSEXP,
                                        SEXP modelSEXP,
                                        SEXP autoPppSEXP,
                                        SEXP t1NoiseSEXP,
@@ -335,6 +343,8 @@ extern "C" SEXP C_deeppicker_pick_file(SEXP pathSEXP,
     const std::string out_path = as<std::string>(outPathSEXP);
     const double scale = as<double>(scaleSEXP);
     const double scale2 = as<double>(scale2SEXP);
+    const double scale_negative = as<double>(scaleNegativeSEXP);
+    const double scale2_negative = as<double>(scale2NegativeSEXP);
     const int model = as<int>(modelSEXP);
     const bool auto_ppp = as<bool>(autoPppSEXP);
     const bool t1_noise = as<bool>(t1NoiseSEXP);
@@ -348,7 +358,7 @@ extern "C" SEXP C_deeppicker_pick_file(SEXP pathSEXP,
         stop("Failed to read spectrum file '%s'.", path);
     }
 
-    configure_picker(picker, scale, scale2, model);
+    configure_picker(picker, scale, scale2, scale_negative, scale2_negative, model);
     maybe_adjust_ppp(picker, model, auto_ppp);
 
     if (!picker.ann_peak_picking(0, t1_noise ? 1 : 0, negative)) {

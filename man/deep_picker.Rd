@@ -10,6 +10,8 @@ deep_picker(
   noise = NULL,
   scale = 5.5,
   scale2 = 3,
+  scale_negative = scale,
+  scale2_negative = scale2,
   model = 1L,
   auto_ppp = TRUE,
   t1_noise = FALSE,
@@ -38,6 +40,12 @@ noise level. The default is `5.5`.}
 \item{scale2}{Noise-floor cutoff, expressed as a multiple of the noise
 level. Spectral points below this threshold are set to zero before peak
 picking. The default is `3.0`.}
+
+\item{scale_negative}{Minimal negative-peak amplitude cutoff, expressed as a
+multiple of the noise level. The default is `scale`.}
+
+\item{scale2_negative}{Negative-peak noise-floor cutoff, expressed as a
+multiple of the noise level. The default is `scale2`.}
 
 \item{model}{ANN model selection. `1L` corresponds to the broader PPP range
 typical for protein spectra; `2L` corresponds to the narrower PPP range

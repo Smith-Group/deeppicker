@@ -66,6 +66,10 @@
 #' @param scale2 Noise-floor cutoff, expressed as a multiple of the noise
 #'   level. Spectral points below this threshold are set to zero before peak
 #'   picking. The default is `3.0`.
+#' @param scale_negative Minimal negative-peak amplitude cutoff, expressed as a
+#'   multiple of the noise level. The default is `scale`.
+#' @param scale2_negative Negative-peak noise-floor cutoff, expressed as a
+#'   multiple of the noise level. The default is `scale2`.
 #' @param model ANN model selection. `1L` corresponds to the broader PPP range
 #'   typical for protein spectra; `2L` corresponds to the narrower PPP range
 #'   typical for metabolomics spectra.
@@ -148,6 +152,8 @@ deep_picker <- function(spectrum,
                         noise = NULL,
                         scale = 5.5,
                         scale2 = 3.0,
+                        scale_negative = scale,
+                        scale2_negative = scale2,
                         model = 1L,
                         auto_ppp = TRUE,
                         t1_noise = FALSE,
@@ -171,6 +177,14 @@ deep_picker <- function(spectrum,
     stop("`noise` must be NULL or a numeric scalar.")
   }
 
+  if (!is.numeric(scale_negative) || length(scale_negative) != 1L) {
+    stop("`scale_negative` must be a numeric scalar.")
+  }
+
+  if (!is.numeric(scale2_negative) || length(scale2_negative) != 1L) {
+    stop("`scale2_negative` must be a numeric scalar.")
+  }
+
   .Call(
     "C_deeppicker_pick_matrix",
     spectrum,
@@ -178,6 +192,8 @@ deep_picker <- function(spectrum,
     if (is.null(noise)) NULL else as.double(noise),
     as.double(scale),
     as.double(scale2),
+    as.double(scale_negative),
+    as.double(scale2_negative),
     as.integer(model),
     as.logical(auto_ppp),
     as.logical(t1_noise),
@@ -209,6 +225,8 @@ deep_picker_file <- function(path,
                              out,
                              scale = 5.5,
                              scale2 = 3.0,
+                             scale_negative = scale,
+                             scale2_negative = scale2,
                              model = 1L,
                              auto_ppp = TRUE,
                              t1_noise = FALSE,
@@ -220,6 +238,8 @@ deep_picker_file <- function(path,
     out,
     as.double(scale),
     as.double(scale2),
+    as.double(scale_negative),
+    as.double(scale2_negative),
     as.integer(model),
     as.logical(auto_ppp),
     as.logical(t1_noise),
