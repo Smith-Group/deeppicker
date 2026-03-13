@@ -2918,6 +2918,7 @@ Value::Value(const Value& other) {
 // Move constructor
 Value::Value(Value&& other) {
   initBasic(nullValue);
+  value_.uint_ = 0;
   swap(other);
 }
 #endif
